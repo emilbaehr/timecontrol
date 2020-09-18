@@ -11,11 +11,11 @@ class ClockViewController: UIViewController {
 
     var timeKeeper: TimeKeeper?
     
-    let clock1 = UIView()
-    let clock2 = UIView()
+    let whiteClock = UIView()
+    let blackClock = UIView()
     
-    let label1 = UILabel(frame: .zero)
-    let label2 = UILabel(frame: .zero)
+    let whiteClockLabel = UILabel(frame: .zero)
+    let blackClockLabel = UILabel(frame: .zero)
 //    let button = UIButton(type: .system)
         
     var observers = [NSKeyValueObservation]()
@@ -25,59 +25,59 @@ class ClockViewController: UIViewController {
         let rootView = UIView()
         rootView.backgroundColor = .systemPink
         
-        clock1.backgroundColor = .systemGray
-        clock2.backgroundColor = .systemOrange
-        clock1.translatesAutoresizingMaskIntoConstraints = false
-        clock2.translatesAutoresizingMaskIntoConstraints = false
+        whiteClock.backgroundColor = .systemGray
+        blackClock.backgroundColor = .systemOrange
+        whiteClock.translatesAutoresizingMaskIntoConstraints = false
+        blackClock.translatesAutoresizingMaskIntoConstraints = false
         
-        label1.text = TimeInterval(300).stringFromTimeInterval()
-        label1.textAlignment = .center
-        label1.translatesAutoresizingMaskIntoConstraints = false
+        whiteClockLabel.text = TimeInterval(300).stringFromTimeInterval()
+        whiteClockLabel.textAlignment = .center
+        whiteClockLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        label2.text = TimeInterval(300).stringFromTimeInterval()
-        label2.textAlignment = .center
-        label2.translatesAutoresizingMaskIntoConstraints = false
+        blackClockLabel.text = TimeInterval(300).stringFromTimeInterval()
+        blackClockLabel.textAlignment = .center
+        blackClockLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        clock1.addSubview(label1)
-        clock2.addSubview(label2)
+        whiteClock.addSubview(whiteClockLabel)
+        blackClock.addSubview(blackClockLabel)
         
-        rootView.addSubview(clock1)
-        rootView.addSubview(clock2)
+        rootView.addSubview(whiteClock)
+        rootView.addSubview(blackClock)
         
-        let clock1Tap = UITapGestureRecognizer(target: self, action:  #selector(switchTurn(_:)))
-        let clock2Tap = UITapGestureRecognizer(target: self, action:  #selector(switchTurn(_:)))
-        clock1.addGestureRecognizer(clock1Tap)
-        clock2.addGestureRecognizer(clock2Tap)
-        clock1.isUserInteractionEnabled = true
-        clock2.isUserInteractionEnabled = true
+        let whiteClockTap = UITapGestureRecognizer(target: self, action:  #selector(switchTurn(_:)))
+        let blackClockTap = UITapGestureRecognizer(target: self, action:  #selector(switchTurn(_:)))
+        whiteClock.addGestureRecognizer(whiteClockTap)
+        blackClock.addGestureRecognizer(blackClockTap)
+        whiteClock.isUserInteractionEnabled = true
+        blackClock.isUserInteractionEnabled = true
         
 //        button.setTitle("Switch", for: .normal)
-//        clock1.addSubview(button)
+//        whiteClock.addSubview(button)
 //        button.translatesAutoresizingMaskIntoConstraints = false
 //        button.addTarget(self, action: #selector(switchTurn), for: .touchUpInside)
         
         let constraints = [
-            clock1.widthAnchor.constraint(equalTo: rootView.widthAnchor),
-            clock1.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.5),
-            clock1.topAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.topAnchor),
+            whiteClock.widthAnchor.constraint(equalTo: rootView.widthAnchor),
+            whiteClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.5),
+            whiteClock.topAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.topAnchor),
             
-            clock2.widthAnchor.constraint(equalTo: rootView.widthAnchor),
-            clock2.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.5),
-            clock2.topAnchor.constraint(equalTo: clock1.bottomAnchor)
+            blackClock.widthAnchor.constraint(equalTo: rootView.widthAnchor),
+            blackClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.5),
+            blackClock.topAnchor.constraint(equalTo: whiteClock.bottomAnchor)
         ]
         NSLayoutConstraint.activate(constraints)
 
         let labelConstraints = [
-            label1.widthAnchor.constraint(equalTo: clock1.widthAnchor),
-            label1.centerXAnchor.constraint(equalTo: clock1.centerXAnchor),
-            label1.centerYAnchor.constraint(equalTo: clock1.centerYAnchor),
+            whiteClockLabel.widthAnchor.constraint(equalTo: whiteClock.widthAnchor),
+            whiteClockLabel.centerXAnchor.constraint(equalTo: whiteClock.centerXAnchor),
+            whiteClockLabel.centerYAnchor.constraint(equalTo: whiteClock.centerYAnchor),
             
-            label2.widthAnchor.constraint(equalTo: clock2.widthAnchor),
-            label2.centerXAnchor.constraint(equalTo: clock2.centerXAnchor),
-            label2.centerYAnchor.constraint(equalTo: clock2.centerYAnchor),
+            blackClockLabel.widthAnchor.constraint(equalTo: blackClock.widthAnchor),
+            blackClockLabel.centerXAnchor.constraint(equalTo: blackClock.centerXAnchor),
+            blackClockLabel.centerYAnchor.constraint(equalTo: blackClock.centerYAnchor),
             
-//            button.centerXAnchor.constraint(equalTo: clock1.centerXAnchor),
-//            button.topAnchor.constraint(equalTo: label1.bottomAnchor)
+//            button.centerXAnchor.constraint(equalTo: whiteClock.centerXAnchor),
+//            button.topAnchor.constraint(equalTo: whiteClockLabel.bottomAnchor)
         ]
         NSLayoutConstraint.activate(labelConstraints)
         
@@ -93,10 +93,10 @@ class ClockViewController: UIViewController {
     
         observers = [
             timeKeeper!.observe(\.whiteTime, options: .new) { (tk, change) in
-                self.label1.text = tk.whiteTime.stringFromTimeInterval()
+                self.whiteClockLabel.text = tk.whiteTime.stringFromTimeInterval()
             },
             timeKeeper!.observe(\.blackTime, options: .new) { (tk, change) in
-                self.label2.text = tk.blackTime.stringFromTimeInterval()
+                self.blackClockLabel.text = tk.blackTime.stringFromTimeInterval()
             }
         ]
     }
