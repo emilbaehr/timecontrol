@@ -16,9 +16,10 @@ class ClockViewController: UIViewController {
     
     let whiteClockLabel = UILabel(frame: .zero)
     let blackClockLabel = UILabel(frame: .zero)
-//    let button = UIButton(type: .system)
         
     var observers = [NSKeyValueObservation]()
+    
+    var clockConstraints = [NSLayoutConstraint]()
     
     override func loadView() {
 
@@ -51,12 +52,7 @@ class ClockViewController: UIViewController {
         whiteClock.isUserInteractionEnabled = true
         blackClock.isUserInteractionEnabled = true
         
-//        button.setTitle("Switch", for: .normal)
-//        whiteClock.addSubview(button)
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        button.addTarget(self, action: #selector(switchTurn), for: .touchUpInside)
-        
-        let constraints = [
+        clockConstraints = [
             whiteClock.widthAnchor.constraint(equalTo: rootView.widthAnchor),
             whiteClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.5),
             whiteClock.topAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.topAnchor),
@@ -65,7 +61,7 @@ class ClockViewController: UIViewController {
             blackClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.5),
             blackClock.topAnchor.constraint(equalTo: whiteClock.bottomAnchor)
         ]
-        NSLayoutConstraint.activate(constraints)
+        NSLayoutConstraint.activate(clockConstraints)
 
         let labelConstraints = [
             whiteClockLabel.widthAnchor.constraint(equalTo: whiteClock.widthAnchor),
@@ -75,9 +71,6 @@ class ClockViewController: UIViewController {
             blackClockLabel.widthAnchor.constraint(equalTo: blackClock.widthAnchor),
             blackClockLabel.centerXAnchor.constraint(equalTo: blackClock.centerXAnchor),
             blackClockLabel.centerYAnchor.constraint(equalTo: blackClock.centerYAnchor),
-            
-//            button.centerXAnchor.constraint(equalTo: whiteClock.centerXAnchor),
-//            button.topAnchor.constraint(equalTo: whiteClockLabel.bottomAnchor)
         ]
         NSLayoutConstraint.activate(labelConstraints)
         
@@ -102,6 +95,19 @@ class ClockViewController: UIViewController {
     }
     
     @objc func switchTurn(_ sender: UITapGestureRecognizer) {
+        
+        let clockConstraintsWhite = [
+            whiteClock.widthAnchor.constraint(equalTo: view.widthAnchor),
+            whiteClock.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.3),
+            whiteClock.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            blackClock.widthAnchor.constraint(equalTo: view.widthAnchor),
+            blackClock.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.7),
+            blackClock.topAnchor.constraint(equalTo: whiteClock.bottomAnchor)
+        ]
+        
+        NSLayoutConstraint.deactivate(clockConstraints)
+        NSLayoutConstraint.activate(clockConstraintsWhite)
+        
         print("Tapped!")
         timeKeeper?.switchTurn()
     }
