@@ -20,6 +20,7 @@ class ClockViewController: UIViewController {
     var observers = [NSKeyValueObservation]()
     
     var clockConstraints = [NSLayoutConstraint]()
+    var whiteTurnConstraints = [NSLayoutConstraint](), blackTurnConstraints = [NSLayoutConstraint](), notStartedConstraints = [NSLayoutConstraint]()
     
     override func loadView() {
 
@@ -52,13 +53,27 @@ class ClockViewController: UIViewController {
         whiteClock.isUserInteractionEnabled = true
         blackClock.isUserInteractionEnabled = true
         
+        notStartedConstraints = [
+            whiteClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.5),
+            blackClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.5)
+        ]
+        NSLayoutConstraint.activate(notStartedConstraints)
+        
+        whiteTurnConstraints = [
+            whiteClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.2),
+            blackClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.8)
+        ]
+        
+        blackTurnConstraints = [
+            whiteClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.8),
+            blackClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.2)
+        ]
+        
         clockConstraints = [
             whiteClock.widthAnchor.constraint(equalTo: rootView.widthAnchor),
-            whiteClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.5),
             whiteClock.topAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.topAnchor),
             
             blackClock.widthAnchor.constraint(equalTo: rootView.widthAnchor),
-            blackClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.5),
             blackClock.topAnchor.constraint(equalTo: whiteClock.bottomAnchor)
         ]
         NSLayoutConstraint.activate(clockConstraints)
@@ -96,17 +111,19 @@ class ClockViewController: UIViewController {
     
     @objc func switchTurn(_ sender: UITapGestureRecognizer) {
         
-        let clockConstraintsWhite = [
-            whiteClock.widthAnchor.constraint(equalTo: view.widthAnchor),
-            whiteClock.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.3),
-            whiteClock.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            blackClock.widthAnchor.constraint(equalTo: view.widthAnchor),
-            blackClock.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.7),
-            blackClock.topAnchor.constraint(equalTo: whiteClock.bottomAnchor)
-        ]
+        NSLayoutConstraint.deactivate(notStartedConstraints)
         
-        NSLayoutConstraint.deactivate(clockConstraints)
-        NSLayoutConstraint.activate(clockConstraintsWhite)
+        if (timeKeeper?.playerTurn == .white) {
+            NSLayoutConstraint.deactivate(blackTurnConstraints)
+            NSLayoutConstraint.activate(whiteTurnConstraints)
+        } else {
+            NSLayoutConstraint.deactivate(whiteTurnConstraints)
+            NSLayoutConstraint.activate(blackTurnConstraints)
+        }
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.view.layoutIfNeeded()
+        })
         
         print("Tapped!")
         timeKeeper?.switchTurn()
