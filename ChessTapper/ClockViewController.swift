@@ -22,22 +22,49 @@ class ClockViewController: UIViewController {
     var clockConstraints = [NSLayoutConstraint]()
     var whiteTurnConstraints = [NSLayoutConstraint](), blackTurnConstraints = [NSLayoutConstraint](), notStartedConstraints = [NSLayoutConstraint]()
     
+    fileprivate func layoutLabels() {
+        let labelConstraints = [
+            whiteClockLabel.widthAnchor.constraint(equalTo: whiteClock.widthAnchor),
+            whiteClockLabel.centerXAnchor.constraint(equalTo: whiteClock.centerXAnchor),
+            whiteClockLabel.centerYAnchor.constraint(equalTo: whiteClock.centerYAnchor),
+            
+            blackClockLabel.widthAnchor.constraint(equalTo: blackClock.widthAnchor),
+            blackClockLabel.centerXAnchor.constraint(equalTo: blackClock.centerXAnchor),
+            blackClockLabel.centerYAnchor.constraint(equalTo: blackClock.centerYAnchor),
+        ]
+        NSLayoutConstraint.activate(labelConstraints)
+    }
+    
     override func loadView() {
 
         let rootView = UIView()
-        rootView.backgroundColor = .systemPink
+        rootView.backgroundColor = .black
         
-        whiteClock.backgroundColor = .systemGray
-        blackClock.backgroundColor = .systemOrange
+        whiteClock.backgroundColor = .white
+        blackClock.backgroundColor = .systemFill
         whiteClock.translatesAutoresizingMaskIntoConstraints = false
         blackClock.translatesAutoresizingMaskIntoConstraints = false
         
+        whiteClock.clipsToBounds = true
+        whiteClock.layer.cornerRadius = 32
+        whiteClock.layer.cornerCurve = .continuous
+        whiteClock.layer.maskedCorners = [.layerMinXMinYCorner,.layerMaxXMinYCorner]
+        
+        blackClock.clipsToBounds = true
+        blackClock.layer.cornerRadius = 32
+        blackClock.layer.cornerCurve = .continuous
+        blackClock.layer.maskedCorners = [.layerMaxXMaxYCorner,.layerMinXMaxYCorner]
+        
         whiteClockLabel.text = TimeInterval(300).stringFromTimeInterval()
         whiteClockLabel.textAlignment = .center
+        whiteClockLabel.textColor = .black
+        whiteClockLabel.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+        whiteClockLabel.font = UIFont.boldSystemFont(ofSize: 48)
         whiteClockLabel.translatesAutoresizingMaskIntoConstraints = false
         
         blackClockLabel.text = TimeInterval(300).stringFromTimeInterval()
         blackClockLabel.textAlignment = .center
+        blackClockLabel.font = UIFont.boldSystemFont(ofSize: 48)
         blackClockLabel.translatesAutoresizingMaskIntoConstraints = false
         
         whiteClock.addSubview(whiteClockLabel)
@@ -59,6 +86,7 @@ class ClockViewController: UIViewController {
         ]
         NSLayoutConstraint.activate(notStartedConstraints)
         
+        // Following constraint collections are for switching between white and black turn.
         whiteTurnConstraints = [
             whiteClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.2),
             blackClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.8)
@@ -78,16 +106,7 @@ class ClockViewController: UIViewController {
         ]
         NSLayoutConstraint.activate(clockConstraints)
 
-        let labelConstraints = [
-            whiteClockLabel.widthAnchor.constraint(equalTo: whiteClock.widthAnchor),
-            whiteClockLabel.centerXAnchor.constraint(equalTo: whiteClock.centerXAnchor),
-            whiteClockLabel.centerYAnchor.constraint(equalTo: whiteClock.centerYAnchor),
-            
-            blackClockLabel.widthAnchor.constraint(equalTo: blackClock.widthAnchor),
-            blackClockLabel.centerXAnchor.constraint(equalTo: blackClock.centerXAnchor),
-            blackClockLabel.centerYAnchor.constraint(equalTo: blackClock.centerYAnchor),
-        ]
-        NSLayoutConstraint.activate(labelConstraints)
+        layoutLabels()
         
         self.view = rootView
     }
