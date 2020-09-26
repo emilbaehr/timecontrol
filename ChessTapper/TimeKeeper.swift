@@ -9,7 +9,7 @@ import Foundation
 
 @objc class TimeKeeper: NSObject {
 
-    private var timer: Timer?
+    private weak var timer: Timer?
     
     @objc dynamic var whiteTime: TimeInterval
     @objc dynamic var blackTime: TimeInterval
@@ -43,7 +43,6 @@ import Foundation
     
     func startTime() {
         self.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
-        switchTurn()
     }
     
     func pauseTime() {
