@@ -43,6 +43,13 @@ import Foundation
     
     func startTime() {
         self.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
+        switchTurn()
+    }
+    
+    func pauseTime() {
+        if (isRunning) {
+            timer?.invalidate()
+        }
     }
     
     func stopTime() {
