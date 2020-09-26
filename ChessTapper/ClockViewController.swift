@@ -11,6 +11,8 @@ class ClockViewController: UIViewController {
 
     var timeKeeper: TimeKeeper?
     
+    var didMakeFirstMove: Bool = false
+    
     let whiteClock = UIView()
     let blackClock = UIView()
     
@@ -151,13 +153,13 @@ class ClockViewController: UIViewController {
         
         // Following constraint collections are for switching between white and black turn.
         whiteTurnConstraints = [
-            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.25, constant: -68),
-            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.75, constant: -68)
+            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.75, constant: -68),
+            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.25, constant: -68)
         ]
         
         blackTurnConstraints = [
-            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.75, constant: -68),
-            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.25, constant: -68)
+            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.25, constant: -68),
+            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.75, constant: -68)
         ]
         
         clockConstraints = [
@@ -194,6 +196,10 @@ class ClockViewController: UIViewController {
     
     override func viewDidLoad() {
         
+        if #available(iOS 13.0, *) {
+            overrideUserInterfaceStyle = .light
+        }
+        
         timeKeeper = TimeKeeper(time: 300, gameType: .suddenDeath)
     
         observers = [
@@ -220,23 +226,42 @@ class ClockViewController: UIViewController {
                 timeKeeper?.startTime()
                 NSLayoutConstraint.deactivate(blackTurnConstraints)
                 NSLayoutConstraint.activate(whiteTurnConstraints)
+                whiteClockSecondaryLabel.text = "Your Turn"
+                blackClockSecondaryLabel.isHidden = true
+                break
                 
-            // Case running.
+            // Case running. Only switch turn if it is not the first move.
             case true:
-                timeKeeper?.switchTurn()
-                if (timeKeeper?.playerTurn == .white) {
-                    NSLayoutConstraint.deactivate(blackTurnConstraints)
-                    NSLayoutConstraint.activate(whiteTurnConstraints)
-                } else {
+                if (didMakeFirstMove == false) {
                     NSLayoutConstraint.deactivate(whiteTurnConstraints)
                     NSLayoutConstraint.activate(blackTurnConstraints)
+                    timeKeeper?.switchTurn()
+                    didMakeFirstMove = true
+                    blackClockSecondaryLabel.text = "Your Turn"
+                    blackClockSecondaryLabel.isHidden = false
+                    whiteClockSecondaryLabel.isHidden = true
+                    break
                 }
+                if (timeKeeper?.playerTurn == .white) {
+                    NSLayoutConstraint.deactivate(whiteTurnConstraints)
+                    NSLayoutConstraint.activate(blackTurnConstraints)
+                    blackClockSecondaryLabel.text = "Your Turn"
+                    blackClockSecondaryLabel.isHidden = false
+                    whiteClockSecondaryLabel.isHidden = true
+                } else {
+                    NSLayoutConstraint.deactivate(blackTurnConstraints)
+                    NSLayoutConstraint.activate(whiteTurnConstraints)
+                    whiteClockSecondaryLabel.text = "Your Turn"
+                    blackClockSecondaryLabel.isHidden = true
+                    whiteClockSecondaryLabel.isHidden = false
+                }
+                timeKeeper?.switchTurn()
                 
             // Case paused.
-        
             // Case stopped.
         }
         
+        print(didMakeFirstMove)
         UIView.animate(withDuration: 0.3, animations: {
             self.view.layoutIfNeeded()
         })
@@ -248,6 +273,9 @@ class ClockViewController: UIViewController {
         if (timeKeeper?.isRunning == true) {
             timeKeeper?.pauseTime()
             pauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+//            NSLayoutConstraint.deactivate(whiteTurnConstraints)
+//            NSLayoutConstraint.deactivate(blackTurnConstraints)
+//            NSLayoutConstraint.activate(notStartedConstraints)
         } else {
             timeKeeper?.startTime()
             pauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
@@ -255,13 +283,11 @@ class ClockViewController: UIViewController {
     }
  
     
-// MARK: -
     override var prefersHomeIndicatorAutoHidden: Bool {
         return true
     }
 
 }
-
 
 // MARK: -
 extension UIFont {
