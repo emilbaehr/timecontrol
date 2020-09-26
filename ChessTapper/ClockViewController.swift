@@ -93,8 +93,8 @@ class ClockViewController: UIViewController {
         pauseButton.layer.cornerRadius = 22.0
         pauseButton.layer.cornerCurve = .continuous
         pauseButton.clipsToBounds = true
-        pauseButton.backgroundColor = .systemFill
-        pauseButton.tintColor = .white
+        pauseButton.backgroundColor = .systemGray
+        pauseButton.tintColor = .secondaryLabel
         pauseButton.translatesAutoresizingMaskIntoConstraints = false
         let pauseTap = UITapGestureRecognizer(target: self, action: #selector(pauseButton(_:)))
         pauseButton.addGestureRecognizer(pauseTap)
@@ -104,7 +104,7 @@ class ClockViewController: UIViewController {
         
         rootView.addSubview(blackClock)
         rootView.addSubview(whiteClock)
-        rootView.addSubview(settingsButton)
+//        rootView.addSubview(settingsButton)
         rootView.addSubview(pauseButton)
         
         let whiteClockTap = UITapGestureRecognizer(target: self, action:  #selector(switchTurn(_:)))
@@ -115,20 +115,20 @@ class ClockViewController: UIViewController {
         blackClock.isUserInteractionEnabled = true
         
         notStartedConstraints = [
-            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.5, constant: -48),
-            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.5, constant: -48)
+            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.5, constant: 0),
+            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.5, constant: 0)
         ]
         NSLayoutConstraint.activate(notStartedConstraints)
         
         // Following constraint collections are for switching between white and black turn.
         whiteTurnConstraints = [
-            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.33, constant: -48),
-            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.67, constant: -48)
+            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.33, constant: 0),
+            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.67, constant: 0)
         ]
         
         blackTurnConstraints = [
-            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.67, constant: -48),
-            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.33, constant: -48)
+            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.67, constant: 0),
+            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.33, constant: 0)
         ]
         
         clockConstraints = [
@@ -146,11 +146,13 @@ class ClockViewController: UIViewController {
             settingsButton.widthAnchor.constraint(equalToConstant: 44),
             settingsButton.heightAnchor.constraint(equalToConstant: 44)
         ]
-        NSLayoutConstraint.activate(settingsButtonConstraints)
+//        NSLayoutConstraint.activate(settingsButtonConstraints)
         
         pauseButtonConstraints = [
-            pauseButton.bottomAnchor.constraint(equalTo: rootView.bottomAnchor, constant: -24),
-            pauseButton.trailingAnchor.constraint(equalTo: rootView.trailingAnchor, constant: -24),
+            pauseButton.centerYAnchor.constraint(equalTo: blackClock.bottomAnchor, constant: 0),
+            pauseButton.centerXAnchor.constraint(equalTo: rootView.bottomAnchor, constant: 0),
+
+//            pauseButton.trailingAnchor.constraint(equalTo: rootView.trailingAnchor, constant: -24),
             pauseButton.widthAnchor.constraint(equalToConstant: 44),
             pauseButton.heightAnchor.constraint(equalToConstant: 44)
         ]
