@@ -261,7 +261,6 @@ class ClockViewController: UIViewController {
             // Case stopped.
         }
         
-        print(didMakeFirstMove)
         UIView.animate(withDuration: 0.3, animations: {
             self.view.layoutIfNeeded()
         })
@@ -273,13 +272,21 @@ class ClockViewController: UIViewController {
         if (timeKeeper?.isRunning == true) {
             timeKeeper?.pauseTime()
             pauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
-//            NSLayoutConstraint.deactivate(whiteTurnConstraints)
-//            NSLayoutConstraint.deactivate(blackTurnConstraints)
-//            NSLayoutConstraint.activate(notStartedConstraints)
+            NSLayoutConstraint.deactivate(whiteTurnConstraints)
+            NSLayoutConstraint.deactivate(blackTurnConstraints)
+            NSLayoutConstraint.activate(notStartedConstraints)
+            blackClockSecondaryLabel.text = "Paused"
+            whiteClockSecondaryLabel.text = "Paused"
+            blackClockSecondaryLabel.isHidden = false
+            whiteClockSecondaryLabel.isHidden = false
         } else {
             timeKeeper?.startTime()
             pauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
         }
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.view.layoutIfNeeded()
+        })
     }
  
     
