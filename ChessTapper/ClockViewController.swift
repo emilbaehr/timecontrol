@@ -150,7 +150,7 @@ class ClockViewController: UIViewController {
         
         pauseButtonConstraints = [
             pauseButton.centerYAnchor.constraint(equalTo: blackClock.bottomAnchor, constant: 0),
-            pauseButton.centerXAnchor.constraint(equalTo: rootView.bottomAnchor, constant: 0),
+            pauseButton.centerXAnchor.constraint(equalTo: rootView.centerXAnchor, constant: 0),
 
 //            pauseButton.trailingAnchor.constraint(equalTo: rootView.trailingAnchor, constant: -24),
             pauseButton.widthAnchor.constraint(equalToConstant: 44),
