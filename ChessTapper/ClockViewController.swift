@@ -155,13 +155,13 @@ class ClockViewController: UIViewController {
         
         // Following constraint collections are for switching between white and black turn.
         whiteTurnConstraints = [
-            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.75, constant: -82),
-            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.25, constant: -82)
+            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.67, constant: -82),
+            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.33, constant: -82)
         ]
         
         blackTurnConstraints = [
-            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.25, constant: -82),
-            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.75, constant: -82)
+            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.33, constant: -82),
+            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.67, constant: -82)
         ]
         
         clockConstraints = [

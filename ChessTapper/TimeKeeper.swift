@@ -65,7 +65,6 @@ import Foundation
         }
         
         self.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
-        print("Started?")
     }
     
     public func pause() {
@@ -74,6 +73,7 @@ import Foundation
         guard let player = self.playerInTurn, let start = self.start else { fatalError("Inconsistent state; there should be a player in turn") }
 
         // Just set the timer to nil.
+        timer?.invalidate()
         self.timer = nil
         
         // Leave player in turn.
@@ -84,24 +84,29 @@ import Foundation
         guard self.state != .stopped else { return }
         
         // Stop everything. Can't be restarted.
+        timer?.invalidate()
         self.timer = nil
+        
         self.playerInTurn = nil
         self.state = .stopped
     }
     
     // If clock isn't running, this will start the timer.
     public func switchTurn() throws {
-        try self.start(player: self.playerOutOfTurn!)
+        playerInTurn = playerOutOfTurn
     }
     
     @objc func updateTime() {
         
-//        if let booked = playerInTurn?.timeControl.bookedTime {
-        playerInTurn?.remainingTime = playerInTurn!.remainingTime - 1.0
-//        }
+        playerInTurn?.remainingTime = remainingTime(for: playerInTurn!)
 
+        print(state)
         print("White: \(whitePlayer.remainingTime)")
         print("Black: \(blackPlayer.remainingTime)")
+    }
+    
+    func remainingTime(for player: Player) -> TimeInterval {
+        return player.remainingTime - 1.0
     }
     
 }
