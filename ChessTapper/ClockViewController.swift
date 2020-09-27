@@ -9,7 +9,7 @@ import UIKit
 
 class ClockViewController: UIViewController {
 
-    var timeKeeper: TimeKeeper?
+    var timeKeeper: Timekeeper?
     
     var didMakeFirstMove: Bool = false
     
@@ -18,7 +18,7 @@ class ClockViewController: UIViewController {
     
     let whiteClockLabel = UILabel(frame: .zero)
     let blackClockLabel = UILabel(frame: .zero)
-    
+
     let whiteClockSecondaryLabel = UILabel(frame: .zero)
     let blackClockSecondaryLabel = UILabel(frame: .zero)
     
@@ -69,26 +69,26 @@ class ClockViewController: UIViewController {
         blackClock.translatesAutoresizingMaskIntoConstraints = false
         
         whiteClock.clipsToBounds = true
-        whiteClock.layer.cornerRadius = 16
+        whiteClock.layer.cornerRadius = 24
         whiteClock.layer.cornerCurve = .continuous
 //        whiteClock.layer.maskedCorners = [.layerMaxXMaxYCorner,.layerMinXMaxYCorner]
         
         blackClock.clipsToBounds = true
-        blackClock.layer.cornerRadius = 16
+        blackClock.layer.cornerRadius = 24
         blackClock.layer.cornerCurve = .continuous
 //        blackClock.layer.maskedCorners = [.layerMinXMinYCorner,.layerMaxXMinYCorner]
         
         whiteClockLabel.text = TimeInterval(300).stringFromTimeInterval()
         whiteClockLabel.textAlignment = .center
         whiteClockLabel.translatesAutoresizingMaskIntoConstraints = false
-        whiteClockLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 72, weight: .semibold)
+        whiteClockLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 72, weight: .light)
         //        whiteClockLabel.font = .rounded(ofSize: 64, weight: .light)
         
         blackClockLabel.text = TimeInterval(300).stringFromTimeInterval()
         blackClockLabel.textAlignment = .center
         blackClockLabel.textColor = .white
         blackClockLabel.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
-        blackClockLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 72, weight: .semibold)
+        blackClockLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 72, weight: .light)
 //        blackClockLabel.font = .rounded(ofSize: 64, weight: .light)
 
         blackClockLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -202,14 +202,15 @@ class ClockViewController: UIViewController {
             overrideUserInterfaceStyle = .light
         }
         
-        timeKeeper = TimeKeeper(time: 300, gameType: .suddenDeath)
+        let timeControl = TimeControl(of: 300)
+        timeKeeper = Timekeeper(whitePlayerTime: timeControl, blackPlayerTime: timeControl)
     
         observers = [
-            timeKeeper!.observe(\.whiteTime, options: .new) { (tk, change) in
-                self.whiteClockLabel.text = tk.whiteTime.stringFromTimeInterval()
+            timeKeeper!.observe(\.whitePlayer.remainingTime, options: .new) { (tk, change) in
+                self.whiteClockLabel.text = tk.whitePlayer.remainingTime.stringFromTimeInterval()
             },
-            timeKeeper!.observe(\.blackTime, options: .new) { (tk, change) in
-                self.blackClockLabel.text = tk.blackTime.stringFromTimeInterval()
+            timeKeeper!.observe(\.blackPlayer.remainingTime, options: .new) { (tk, change) in
+                self.blackClockLabel.text = tk.blackPlayer.remainingTime.stringFromTimeInterval()
             }
         ]
     }
@@ -244,7 +245,7 @@ class ClockViewController: UIViewController {
                     whiteClockSecondaryLabel.isHidden = true
                     break
                 }
-                if (timeKeeper?.playerTurn == .white) {
+                if (timeKeeper?.playerInTurn == timeKeeper?.whitePlayer) {
                     NSLayoutConstraint.deactivate(whiteTurnConstraints)
                     NSLayoutConstraint.activate(blackTurnConstraints)
                     blackClockSecondaryLabel.text = "Your Turn"
@@ -298,7 +299,7 @@ class ClockViewController: UIViewController {
 
 }
 
-// MARK: -
+// MARK: - Extension for using SF Pro Rounded.
 extension UIFont {
     class func rounded(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {
         let systemFont = UIFont.monospacedDigitSystemFont(ofSize: size, weight: weight)

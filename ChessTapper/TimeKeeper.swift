@@ -1,5 +1,5 @@
 //
-//  TimeKeeper.swift
+//  Timekeeper.swift
 //  ChessTapper
 //
 //  Created by Emil Malthe Bæhr Christensen on 27/08/2020.
@@ -7,38 +7,38 @@
 
 import Foundation
 
-@objc class TimeKeeper: NSObject {
+@objc class Timekeeper: NSObject {
 
     private weak var timer: Timer?
     
-    @objc dynamic var whiteTime: TimeInterval
-    @objc dynamic var blackTime: TimeInterval
-    
-    var playerTurn: Color
-    var gameType: GameType
+    private var start: Date? // When the timer was started.
     
     var isRunning: Bool {
         self.timer != nil
     }
     
-    enum Color {
-        case white
-        case black
+    @objc dynamic var whitePlayer: Player
+    @objc dynamic var blackPlayer: Player
+    
+    public private(set) var playerInTurn: Player?
+    public var playerOutOfTurn: Player? {
+        guard let playerInTurn = self.playerInTurn else { return nil }
+        return playerInTurn == self.whitePlayer ? self.blackPlayer : self.whitePlayer
     }
     
-    enum GameType {
-        case fischer(increment: TimeInterval)
-        case suddenDeath
+    enum State {
+        case notStarted
+        case running
+        case paused
+        case stopped
     }
     
-    init(time seconds: TimeInterval, gameType: GameType) {
-        self.whiteTime = seconds
-        self.blackTime = seconds
+    init(whitePlayerTime: TimeControl, blackPlayerTime: TimeControl) {
+        self.whitePlayer = Player(timeControl: whitePlayerTime)
+        self.blackPlayer = Player(timeControl: blackPlayerTime)
         
         // Always begin as white.
-        self.playerTurn = .white
-        
-        self.gameType = gameType
+        self.playerInTurn = whitePlayer
     }
     
     func startTime() {
@@ -58,34 +58,65 @@ import Foundation
     func switchTurn() {
         
         // Set playerTurn.
-        if (playerTurn == .white) {
-            playerTurn = .black
+        if (playerInTurn == whitePlayer) {
+            playerInTurn = blackPlayer
         } else {
-            playerTurn = .white
+            playerInTurn = whitePlayer
         }
         
-        // Do Fischer increment here.
     }
     
-    @objc func updateTime() {
+    @objc func updateTime() throws {
         
-        switch playerTurn {
-            case .white:
-                whiteTime -= 1.0
-            case .black:
-                blackTime -= 1.0
+        if let player = playerInTurn {
+            switch player {
+                case whitePlayer:
+                    whitePlayer.remainingTime -= 1.0
+                case blackPlayer:
+                    blackPlayer.remainingTime -= 1.0
+                default:
+                    throw Error.unknownPlayer
+            }
         }
         
-        if (whiteTime == 0 || blackTime == 0) {
+        if (whitePlayer.remainingTime == 0 || blackPlayer.remainingTime == 0) {
             stopTime()
         }
         
-        print("White: \(whiteTime)")
-        print("Black: \(blackTime)")
+        print("White: \(whitePlayer.remainingTime)")
+        print("Black: \(blackPlayer.remainingTime)")
     }
     
 }
 
+// MARK: -
+extension Timekeeper {
+
+    @objc public class Player: NSObject {
+        
+        @objc dynamic var remainingTime: TimeInterval
+
+        public let timeControl: TimeControl
+        
+        init(timeControl: TimeControl) {
+            self.timeControl = timeControl
+            self.remainingTime = timeControl.bookedTime
+        }
+    }
+    
+}
+
+// MARK: - Errors
+extension Timekeeper {
+    
+    // Because we don't want to handle all the state and data clearing in conjunction with restarting a timekeeper from the beginning, we will throw an error. Just make a new Timekeeper.
+    public enum Error: Swift.Error {
+        case unknownPlayer
+        case restartNotAllowed
+    }
+}
+
+// MARK: -
 extension TimeInterval {
 
     func stringFromTimeInterval() -> String {
@@ -101,4 +132,5 @@ extension TimeInterval {
         // Format as String.
         return String(format: "%0.2d:%0.2d", minutes, seconds)
     }
+    
 }
