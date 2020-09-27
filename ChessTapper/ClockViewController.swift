@@ -81,13 +81,15 @@ class ClockViewController: UIViewController {
         whiteClockLabel.text = TimeInterval(300).stringFromTimeInterval()
         whiteClockLabel.textAlignment = .center
         whiteClockLabel.translatesAutoresizingMaskIntoConstraints = false
-        whiteClockLabel.font = .rounded(ofSize: 72, weight: .light)
+        whiteClockLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 72, weight: .semibold)
+        //        whiteClockLabel.font = .rounded(ofSize: 64, weight: .light)
         
         blackClockLabel.text = TimeInterval(300).stringFromTimeInterval()
         blackClockLabel.textAlignment = .center
         blackClockLabel.textColor = .white
         blackClockLabel.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
-        blackClockLabel.font = .rounded(ofSize: 72, weight: .light)
+        blackClockLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 72, weight: .semibold)
+//        blackClockLabel.font = .rounded(ofSize: 64, weight: .light)
 
         blackClockLabel.translatesAutoresizingMaskIntoConstraints = false
         
@@ -146,28 +148,28 @@ class ClockViewController: UIViewController {
         blackClock.isUserInteractionEnabled = true
         
         notStartedConstraints = [
-            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.5, constant: -68),
-            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.5, constant: -68)
+            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.5, constant: -82),
+            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.5, constant: -82)
         ]
         NSLayoutConstraint.activate(notStartedConstraints)
         
         // Following constraint collections are for switching between white and black turn.
         whiteTurnConstraints = [
-            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.75, constant: -68),
-            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.25, constant: -68)
+            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.75, constant: -82),
+            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.25, constant: -82)
         ]
         
         blackTurnConstraints = [
-            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.25, constant: -68),
-            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.75, constant: -68)
+            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.25, constant: -82),
+            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.75, constant: -82)
         ]
         
         clockConstraints = [
-            blackClock.widthAnchor.constraint(equalTo: rootView.widthAnchor, constant: -32),
-            blackClock.topAnchor.constraint(equalTo: rootView.topAnchor, constant: 30),
+            blackClock.widthAnchor.constraint(equalTo: rootView.widthAnchor, constant: -16),
+            blackClock.topAnchor.constraint(equalTo: rootView.topAnchor, constant: 44),
             blackClock.centerXAnchor.constraint(equalTo: rootView.centerXAnchor),
             
-            whiteClock.widthAnchor.constraint(equalTo: rootView.widthAnchor, constant: -32),
+            whiteClock.widthAnchor.constraint(equalTo: rootView.widthAnchor, constant: -16),
             whiteClock.topAnchor.constraint(equalTo: blackClock.bottomAnchor, constant: 76),
             whiteClock.centerXAnchor.constraint(equalTo: rootView.centerXAnchor),
         ]
