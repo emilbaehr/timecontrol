@@ -13,10 +13,6 @@ import Foundation
     
     private var start: Date? // When the timer was started.
     
-    var isRunning: Bool {
-        self.timer != nil
-    }
-    
     @objc dynamic var whitePlayer: Player
     @objc dynamic var blackPlayer: Player
     
@@ -26,6 +22,8 @@ import Foundation
         return playerInTurn == self.whitePlayer ? self.blackPlayer : self.whitePlayer
     }
     
+    public private(set) var state: State
+
     enum State {
         case notStarted
         case running
@@ -39,50 +37,69 @@ import Foundation
         
         // Always begin as white.
         self.playerInTurn = whitePlayer
+        self.state = .notStarted
     }
     
-    func startTime() {
+    public func start(player: Player) throws {
+        guard self.state != .stopped else { throw Error.restartNotAllowed }
+        
+        // If we're starting the player who's already running, just return.
+//        guard player != self.playerInTurn || self.state == .paused else { return }
+        guard player == self.whitePlayer || player == self.blackPlayer else { throw Error.unknownPlayer }
+        
+        let now = Date()
+        
+        let nextPlayer = player ?? self.playerInTurn ?? self.whitePlayer
+        
+        print("Start???")
+        // At this point, we shouldn't have a start time (as it would also be overwritten and thereby ignored).
+//        assert(self.start == nil)
+        
+        self.start = now
+        if nextPlayer != self.playerInTurn {
+            self.playerInTurn = nextPlayer
+        }
+        
+        if self.state != .running {
+            self.state = .running
+        }
+        
         self.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
+        print("Started?")
     }
     
-    func pauseTime() {
-        if (isRunning) {
-            timer?.invalidate()
-        }
+    public func pause() {
+        
+        guard self.state == .running else { return }
+        guard let player = self.playerInTurn, let start = self.start else { fatalError("Inconsistent state; there should be a player in turn") }
+
+        // Just set the timer to nil.
+        self.timer = nil
+        
+        // Leave player in turn.
+        self.state = .paused
     }
     
-    func stopTime() {
-        timer?.invalidate()
+    public func stop() {
+        guard self.state != .stopped else { return }
+        
+        // Stop everything. Can't be restarted.
+        self.timer = nil
+        self.playerInTurn = nil
+        self.state = .stopped
     }
     
-    func switchTurn() {
-        
-        // Set playerTurn.
-        if (playerInTurn == whitePlayer) {
-            playerInTurn = blackPlayer
-        } else {
-            playerInTurn = whitePlayer
-        }
-        
+    // If clock isn't running, this will start the timer.
+    public func switchTurn() throws {
+        try self.start(player: self.playerOutOfTurn!)
     }
     
-    @objc func updateTime() throws {
+    @objc func updateTime() {
         
-        if let player = playerInTurn {
-            switch player {
-                case whitePlayer:
-                    whitePlayer.remainingTime -= 1.0
-                case blackPlayer:
-                    blackPlayer.remainingTime -= 1.0
-                default:
-                    throw Error.unknownPlayer
-            }
-        }
-        
-        if (whitePlayer.remainingTime == 0 || blackPlayer.remainingTime == 0) {
-            stopTime()
-        }
-        
+//        if let booked = playerInTurn?.timeControl.bookedTime {
+        playerInTurn?.remainingTime = playerInTurn!.remainingTime - 1.0
+//        }
+
         print("White: \(whitePlayer.remainingTime)")
         print("Black: \(blackPlayer.remainingTime)")
     }
