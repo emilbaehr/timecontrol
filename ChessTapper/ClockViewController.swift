@@ -6,11 +6,14 @@
 //
 
 import UIKit
+import Combine
 
 class ClockViewController: UIViewController {
 
     var timeKeeper: Timekeeper?
     var didMakeFirstMove: Bool = false // Temporary variable for hacky solution.
+    
+    private var cancellable: AnyCancellable?
     
     // UI components.
     let whiteClock = UIView()
@@ -208,6 +211,22 @@ class ClockViewController: UIViewController {
         NSLayoutConstraint.activate(labelConstraints)
     }
     
+    private func render(_ state: Timekeeper.State) {
+            switch state {
+            case .notStarted:
+                print("Not Started.")
+                break
+            case .running:
+                print("Running.")
+                break
+            case .paused:
+                print("Paused.")
+                break
+            case .stopped:
+                break
+            }
+        }
+    
     override func viewDidLoad() {
         
         if #available(iOS 13.0, *) {
@@ -216,6 +235,10 @@ class ClockViewController: UIViewController {
         
         let timeControl = TimeControl(of: 300)
         timeKeeper = Timekeeper(whitePlayerTime: timeControl, blackPlayerTime: timeControl)
+        
+        cancellable = timeKeeper?.$state.sink { [weak self] state in
+            self?.render(state)
+        }
     
         observers = [
             timeKeeper!.observe(\.whitePlayer.remainingTime, options: .new) { (tk, change) in

@@ -7,7 +7,7 @@
 
 import Foundation
 
-@objc class Timekeeper: NSObject {
+@objc class Timekeeper: NSObject, ObservableObject {
 
     private weak var timer: Timer?
     
@@ -22,7 +22,7 @@ import Foundation
         return playerInTurn == self.whitePlayer ? self.blackPlayer : self.whitePlayer
     }
     
-    public private(set) var state: State
+    @Published public private(set) var state: State
 
     enum State {
         case notStarted
