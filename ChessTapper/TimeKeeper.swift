@@ -94,8 +94,6 @@ import Foundation
     @objc func updateTime() {
         
         playerInTurn?.remainingTime = remainingTime(for: playerInTurn!)
-
-        print(state)
         print("White: \(whitePlayer.remainingTime)")
         print("Black: \(blackPlayer.remainingTime)")
     }
