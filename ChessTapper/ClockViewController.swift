@@ -10,52 +10,26 @@ import UIKit
 class ClockViewController: UIViewController {
 
     var timeKeeper: Timekeeper?
+    var didMakeFirstMove: Bool = false // Temporary variable for hacky solution.
     
-    var didMakeFirstMove: Bool = false
-    
+    // UI components.
     let whiteClock = UIView()
     let blackClock = UIView()
-    
     let whiteClockLabel = UILabel(frame: .zero)
     let blackClockLabel = UILabel(frame: .zero)
-
     let whiteClockSecondaryLabel = UILabel(frame: .zero)
     let blackClockSecondaryLabel = UILabel(frame: .zero)
-    
     let settingsButton = UIButton(type: .custom)
-    @objc let pauseButton = UIButton(type: .custom)
+    let stopButton = UIButton(type: .custom)
+    let pauseButton = UIButton(type: .custom)
         
+    // Observers:
     var observers = [NSKeyValueObservation]()
     
+    // Constraints:
     var clockConstraints = [NSLayoutConstraint]()
     var whiteTurnConstraints = [NSLayoutConstraint](), blackTurnConstraints = [NSLayoutConstraint](), notStartedConstraints = [NSLayoutConstraint]()
-    var settingsButtonConstraints = [NSLayoutConstraint]()
-    var pauseButtonConstraints = [NSLayoutConstraint]()
-    
-    override var prefersStatusBarHidden: Bool {
-        return true
-    }
-    
-    fileprivate func layoutLabels() {
-        let labelConstraints = [
-            whiteClockLabel.widthAnchor.constraint(equalTo: whiteClock.widthAnchor),
-            whiteClockLabel.centerXAnchor.constraint(equalTo: whiteClock.centerXAnchor),
-            whiteClockLabel.centerYAnchor.constraint(equalTo: whiteClock.centerYAnchor),
-            
-            blackClockLabel.widthAnchor.constraint(equalTo: blackClock.widthAnchor),
-            blackClockLabel.centerXAnchor.constraint(equalTo: blackClock.centerXAnchor),
-            blackClockLabel.centerYAnchor.constraint(equalTo: blackClock.centerYAnchor),
-            
-            whiteClockSecondaryLabel.widthAnchor.constraint(equalTo: whiteClock.widthAnchor),
-            whiteClockSecondaryLabel.centerXAnchor.constraint(equalTo: whiteClock.centerXAnchor),
-            whiteClockSecondaryLabel.bottomAnchor.constraint(equalTo: whiteClock.bottomAnchor, constant: -24),
-            
-            blackClockSecondaryLabel.widthAnchor.constraint(equalTo: blackClock.widthAnchor),
-            blackClockSecondaryLabel.centerXAnchor.constraint(equalTo: blackClock.centerXAnchor),
-            blackClockSecondaryLabel.topAnchor.constraint(equalTo: blackClock.topAnchor, constant: 24),
-        ]
-        NSLayoutConstraint.activate(labelConstraints)
-    }
+    var settingsButtonConstraints = [NSLayoutConstraint](), pauseButtonConstraints = [NSLayoutConstraint](), stopButtonConstraints = [NSLayoutConstraint]()
     
     override func loadView() {
 
@@ -107,8 +81,8 @@ class ClockViewController: UIViewController {
         whiteClockSecondaryLabel.font = UIFont.preferredFont(forTextStyle: .headline)
         whiteClockSecondaryLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        settingsButton.setImage(UIImage(systemName: "gear"), for: .normal)
         let symbolConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular, scale: .large)
+        settingsButton.setImage(UIImage(systemName: "gear"), for: .normal)
         settingsButton.setPreferredSymbolConfiguration(symbolConfig, forImageIn: .normal)
         settingsButton.layer.cornerRadius = 22.0
         settingsButton.clipsToBounds = true
@@ -116,10 +90,18 @@ class ClockViewController: UIViewController {
         settingsButton.overrideUserInterfaceStyle = .dark
         settingsButton.tintColor = .label
         settingsButton.translatesAutoresizingMaskIntoConstraints = false
+
+        stopButton.setImage(UIImage(systemName: "stop.fill"), for: .normal)
+        stopButton.setPreferredSymbolConfiguration(symbolConfig, forImageIn: .normal)
+        stopButton.layer.cornerRadius = 22.0
+        stopButton.clipsToBounds = true
+        stopButton.backgroundColor = .secondarySystemGroupedBackground
+        stopButton.overrideUserInterfaceStyle = .dark
+        stopButton.tintColor = .label
+        stopButton.translatesAutoresizingMaskIntoConstraints = false
         
-        let pauseButtonSymbolConfig = UIImage.SymbolConfiguration(pointSize: 17, weight: .regular, scale: .large)
         pauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
-        pauseButton.setPreferredSymbolConfiguration(pauseButtonSymbolConfig, forImageIn: .normal)
+        pauseButton.setPreferredSymbolConfiguration(symbolConfig, forImageIn: .normal)
         pauseButton.layer.cornerRadius = 22.0
         pauseButton.clipsToBounds = true
         pauseButton.overrideUserInterfaceStyle = .dark
@@ -138,6 +120,7 @@ class ClockViewController: UIViewController {
         rootView.addSubview(blackClock)
         rootView.addSubview(whiteClock)
         rootView.addSubview(settingsButton)
+        rootView.addSubview(stopButton)
         rootView.addSubview(pauseButton)
         
         let whiteClockTap = UITapGestureRecognizer(target: self, action:  #selector(switchTurn(_:)))
@@ -183,6 +166,14 @@ class ClockViewController: UIViewController {
         ]
         NSLayoutConstraint.activate(pauseButtonConstraints)
         
+        stopButtonConstraints = [
+            stopButton.centerXAnchor.constraint(equalTo: rootView.centerXAnchor, constant: -68),
+            stopButton.topAnchor.constraint(equalTo: blackClock.bottomAnchor, constant: 16),
+            stopButton.widthAnchor.constraint(equalToConstant: 44),
+            stopButton.heightAnchor.constraint(equalToConstant: 44)
+        ]
+        NSLayoutConstraint.activate(stopButtonConstraints)
+        
         settingsButtonConstraints = [
             settingsButton.centerXAnchor.constraint(equalTo: rootView.centerXAnchor, constant: 68),
             settingsButton.topAnchor.constraint(equalTo: blackClock.bottomAnchor, constant: 16),
@@ -194,6 +185,27 @@ class ClockViewController: UIViewController {
         layoutLabels()
         
         self.view = rootView
+    }
+    
+    fileprivate func layoutLabels() {
+        let labelConstraints = [
+            whiteClockLabel.widthAnchor.constraint(equalTo: whiteClock.widthAnchor),
+            whiteClockLabel.centerXAnchor.constraint(equalTo: whiteClock.centerXAnchor),
+            whiteClockLabel.centerYAnchor.constraint(equalTo: whiteClock.centerYAnchor),
+            
+            blackClockLabel.widthAnchor.constraint(equalTo: blackClock.widthAnchor),
+            blackClockLabel.centerXAnchor.constraint(equalTo: blackClock.centerXAnchor),
+            blackClockLabel.centerYAnchor.constraint(equalTo: blackClock.centerYAnchor),
+            
+            whiteClockSecondaryLabel.widthAnchor.constraint(equalTo: whiteClock.widthAnchor),
+            whiteClockSecondaryLabel.centerXAnchor.constraint(equalTo: whiteClock.centerXAnchor),
+            whiteClockSecondaryLabel.bottomAnchor.constraint(equalTo: whiteClock.bottomAnchor, constant: -24),
+            
+            blackClockSecondaryLabel.widthAnchor.constraint(equalTo: blackClock.widthAnchor),
+            blackClockSecondaryLabel.centerXAnchor.constraint(equalTo: blackClock.centerXAnchor),
+            blackClockSecondaryLabel.topAnchor.constraint(equalTo: blackClock.topAnchor, constant: 24),
+        ]
+        NSLayoutConstraint.activate(labelConstraints)
     }
     
     override func viewDidLoad() {
@@ -236,7 +248,7 @@ class ClockViewController: UIViewController {
             if (didMakeFirstMove == false) {
                 NSLayoutConstraint.deactivate(whiteTurnConstraints)
                 NSLayoutConstraint.activate(blackTurnConstraints)
-                try timeKeeper?.switchTurn()
+                timeKeeper?.switchTurn()
                 didMakeFirstMove = true
                 blackClockSecondaryLabel.text = "Your Turn"
                 blackClockSecondaryLabel.isHidden = false
@@ -256,7 +268,7 @@ class ClockViewController: UIViewController {
                 blackClockSecondaryLabel.isHidden = true
                 whiteClockSecondaryLabel.isHidden = false
             }
-            try timeKeeper?.switchTurn()
+            timeKeeper?.switchTurn()
             
         case .paused: break
         case .stopped: break
@@ -292,6 +304,10 @@ class ClockViewController: UIViewController {
  
     
     override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
+    }
+    
+    override var prefersStatusBarHidden: Bool {
         return true
     }
 

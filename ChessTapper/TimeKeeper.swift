@@ -49,11 +49,7 @@ import Foundation
         
         let now = Date()
         
-        let nextPlayer = player ?? self.playerInTurn ?? self.whitePlayer
-        
-        print("Start???")
-        // At this point, we shouldn't have a start time (as it would also be overwritten and thereby ignored).
-//        assert(self.start == nil)
+        let nextPlayer = player
         
         self.start = now
         if nextPlayer != self.playerInTurn {
@@ -70,7 +66,6 @@ import Foundation
     public func pause() {
         
         guard self.state == .running else { return }
-        guard let player = self.playerInTurn, let start = self.start else { fatalError("Inconsistent state; there should be a player in turn") }
 
         // Just set the timer to nil.
         timer?.invalidate()
@@ -81,18 +76,18 @@ import Foundation
     }
     
     public func stop() {
+        
         guard self.state != .stopped else { return }
         
         // Stop everything. Can't be restarted.
         timer?.invalidate()
         self.timer = nil
-        
         self.playerInTurn = nil
         self.state = .stopped
     }
     
     // If clock isn't running, this will start the timer.
-    public func switchTurn() throws {
+    public func switchTurn() {
         playerInTurn = playerOutOfTurn
     }
     
@@ -106,6 +101,7 @@ import Foundation
     }
     
     func remainingTime(for player: Player) -> TimeInterval {
+//        return player.timeControl.bookedTime - Date().timeIntervalSince(start!)
         return player.remainingTime - 1.0
     }
     
