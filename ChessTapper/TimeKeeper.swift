@@ -16,7 +16,7 @@ import Foundation
     @objc dynamic var whitePlayer: Player
     @objc dynamic var blackPlayer: Player
     
-    public private(set) var playerInTurn: Player?
+    @objc dynamic public private(set) var playerInTurn: Player?
     public var playerOutOfTurn: Player? {
         guard let playerInTurn = self.playerInTurn else { return nil }
         return playerInTurn == self.whitePlayer ? self.blackPlayer : self.whitePlayer

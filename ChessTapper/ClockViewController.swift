@@ -14,6 +14,7 @@ class ClockViewController: UIViewController {
     var didMakeFirstMove: Bool = false // Temporary variable for hacky solution.
     
     private var cancellable: AnyCancellable?
+    private var cancellable2: AnyCancellable?
     
     // UI components.
     let whiteClock = UIView()
@@ -217,18 +218,26 @@ class ClockViewController: UIViewController {
                 print("Not Started.")
                 blackClockSecondaryLabel.text = "Tap to Start"
                 whiteClockSecondaryLabel.text = "Waiting for Black"
+                
+                pauseButton.isEnabled = false
+                stopButton.isEnabled = false
+                
                 break
                 
             case .running:
                 print("Running.")
                 NSLayoutConstraint.deactivate(notStartedConstraints)
+                pauseButton.isEnabled = true
+                
                 if (timeKeeper?.playerInTurn == timeKeeper?.whitePlayer) {
+                    print("White!")
                     NSLayoutConstraint.deactivate(blackTurnConstraints)
                     NSLayoutConstraint.activate(whiteTurnConstraints)
                     whiteClockSecondaryLabel.text = "Your Turn"
                     whiteClockSecondaryLabel.isHidden = false
                     blackClockSecondaryLabel.isHidden = true
                 } else {
+                    print("Black!")
                     NSLayoutConstraint.deactivate(whiteTurnConstraints)
                     NSLayoutConstraint.activate(blackTurnConstraints)
                     blackClockSecondaryLabel.text = "Your Turn"
@@ -236,19 +245,29 @@ class ClockViewController: UIViewController {
                     whiteClockSecondaryLabel.isHidden = true
                 }
                 
+                settingsButton.isHidden = true
+                stopButton.isHidden = true
                 pauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
                 break
                 
             case .paused:
                 print("Paused.")
+                
                 NSLayoutConstraint.deactivate(whiteTurnConstraints)
                 NSLayoutConstraint.deactivate(blackTurnConstraints)
                 NSLayoutConstraint.activate(notStartedConstraints)
+                
                 pauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+                
                 blackClockSecondaryLabel.text = "Paused"
                 whiteClockSecondaryLabel.text = "Paused"
                 blackClockSecondaryLabel.isHidden = false
                 whiteClockSecondaryLabel.isHidden = false
+                
+                settingsButton.isHidden = false
+                stopButton.isHidden = false
+                stopButton.isEnabled = true
+                pauseButton.isEnabled = true
                 break
                 
             case .stopped:
@@ -269,13 +288,17 @@ class ClockViewController: UIViewController {
         cancellable = timeKeeper?.$state.sink { [weak self] state in
             self?.render(state)
         }
-    
+
         observers = [
             timeKeeper!.observe(\.whitePlayer.remainingTime, options: .new) { (tk, change) in
                 self.whiteClockLabel.text = tk.whitePlayer.remainingTime.stringFromTimeInterval()
             },
             timeKeeper!.observe(\.blackPlayer.remainingTime, options: .new) { (tk, change) in
                 self.blackClockLabel.text = tk.blackPlayer.remainingTime.stringFromTimeInterval()
+            },
+            timeKeeper!.observe(\.playerInTurn, options: .new) { (tk, change) in
+                print(change)
+                self.render((self.timeKeeper?.state)!)
             }
         ]
     }
