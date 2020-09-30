@@ -103,6 +103,8 @@ class ClockViewController: UIViewController {
         stopButton.overrideUserInterfaceStyle = .dark
         stopButton.tintColor = .label
         stopButton.translatesAutoresizingMaskIntoConstraints = false
+        let stopTap = UITapGestureRecognizer(target: self, action: #selector(stopButton(_:)))
+        stopButton.addGestureRecognizer(stopTap)
         
         pauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
         pauseButton.setPreferredSymbolConfiguration(symbolConfig, forImageIn: .normal)
@@ -188,6 +190,7 @@ class ClockViewController: UIViewController {
         layoutLabels()
         
         self.view = rootView
+        self.view.layoutIfNeeded()
     }
     
     fileprivate func layoutLabels() {
@@ -214,10 +217,13 @@ class ClockViewController: UIViewController {
     private func render(_ state: Timekeeper.State) {
         
             switch state {
-            case .notStarted:
+            case .notStarted, .stopped:
                 print("Not Started.")
                 blackClockSecondaryLabel.text = "Tap to Start"
                 whiteClockSecondaryLabel.text = "Waiting for Black"
+                
+                blackClockSecondaryLabel.isHidden = false
+                whiteClockSecondaryLabel.isHidden = false
                 
                 pauseButton.isEnabled = false
                 stopButton.isEnabled = false
@@ -269,9 +275,6 @@ class ClockViewController: UIViewController {
                 stopButton.isEnabled = true
                 pauseButton.isEnabled = true
                 break
-                
-            case .stopped:
-                break
             }
         
             UIView.animate(withDuration: 0.3, animations: {
@@ -316,6 +319,14 @@ class ClockViewController: UIViewController {
             try timeKeeper?.start(player: timeKeeper!.playerInTurn!)
         } else {
             timeKeeper?.pause()
+        }
+    }
+    
+    // Stop should behave like restart.
+    @objc func stopButton(_ sender: UIButton) {
+        if timeKeeper?.state == .paused {
+            timeKeeper?.stop()
+//            timeKeeper = Timekeeper()
         }
     }
  

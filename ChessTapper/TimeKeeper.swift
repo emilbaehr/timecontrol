@@ -86,6 +86,10 @@ import Foundation
         self.state = .stopped
     }
     
+//    public func restart() {
+//        stop()
+//    }
+    
     // If clock isn't running, this will start the timer.
     public func switchTurn() {
         playerInTurn = playerOutOfTurn
