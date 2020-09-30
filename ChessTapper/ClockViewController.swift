@@ -10,11 +10,8 @@ import Combine
 
 class ClockViewController: UIViewController {
 
-    var timeKeeper: Timekeeper?
-    var didMakeFirstMove: Bool = false // Temporary variable for hacky solution.
-    
-    private var cancellable: AnyCancellable?
-    private var cancellable2: AnyCancellable?
+    private var timeControl: TimeControl?
+    private var timeKeeper: Timekeeper?
     
     // UI components.
     let whiteClock = UIView()
@@ -28,20 +25,25 @@ class ClockViewController: UIViewController {
     let pauseButton = UIButton(type: .custom)
         
     // Observers:
-    var observers = [NSKeyValueObservation]()
+    private var observers = [NSKeyValueObservation]()
+    private var cancellable: AnyCancellable?
+    private var cancellable2: AnyCancellable?
     
     // Constraints:
-    var clockConstraints = [NSLayoutConstraint]()
-    var whiteTurnConstraints = [NSLayoutConstraint](), blackTurnConstraints = [NSLayoutConstraint](), notStartedConstraints = [NSLayoutConstraint]()
-    var settingsButtonConstraints = [NSLayoutConstraint](), pauseButtonConstraints = [NSLayoutConstraint](), stopButtonConstraints = [NSLayoutConstraint]()
+    private var clockConstraints = [NSLayoutConstraint]()
+    private var whiteTurnConstraints = [NSLayoutConstraint](), blackTurnConstraints = [NSLayoutConstraint](), notStartedConstraints = [NSLayoutConstraint]()
+    private var settingsButtonConstraints = [NSLayoutConstraint](), pauseButtonConstraints = [NSLayoutConstraint](), stopButtonConstraints = [NSLayoutConstraint]()
     
     override func loadView() {
 
         let rootView = UIView()
         rootView.backgroundColor = .black
         
-        let timeControl = TimeControl(of: 300)
-        timeKeeper = Timekeeper(whitePlayerTime: timeControl, blackPlayerTime: timeControl)
+        timeControl = TimeControl(of: 300)
+        
+        if let timeControl = self.timeControl {
+            timeKeeper = Timekeeper(whitePlayerTime: timeControl, blackPlayerTime: timeControl)
+        }
         
         whiteClock.backgroundColor = .white
         blackClock.backgroundColor = .secondarySystemGroupedBackground
@@ -288,10 +290,56 @@ class ClockViewController: UIViewController {
             overrideUserInterfaceStyle = .light
         }
         
+        observeTimekeeper()
+    }
+    
+    @objc func switchTurn(_ sender: UITapGestureRecognizer) throws {
+        if timeKeeper?.state == .notStarted {
+            try timeKeeper?.start(timeKeeper!.playerInTurn!)
+        } else {
+            timeKeeper?.switchTurn()
+        }
+    }
+    
+    @objc func pauseButton(_ sender: UIButton) throws {
+        if timeKeeper?.state == .paused {
+            try timeKeeper?.start(timeKeeper!.playerInTurn!)
+        } else {
+            timeKeeper?.pause()
+        }
+    }
+    
+    @objc func stopButton(_ sender: UIButton) {
+//        if timeKeeper?.state == .paused {
+//            do {
+//                try timeKeeper?.restart()
+//            } catch {
+//                print(error)
+//            }
+//        }
+
+        if timeKeeper?.state == .paused {
+            timeKeeper?.stop()
+
+            // Do some data clearing. Not sure if this should be build into the Timekeeper, though.
+            if let whiteBooked = timeKeeper?.whitePlayer.timeControl.bookedTime, let blackBooked = timeKeeper?.whitePlayer.timeControl.bookedTime {
+                timeKeeper?.whitePlayer.remainingTime = whiteBooked
+                timeKeeper?.blackPlayer.remainingTime = blackBooked
+            }
+
+            guard let tC = self.timeControl else { return }
+            print("Hello?")
+            timeKeeper = Timekeeper(whitePlayerTime: tC, blackPlayerTime: tC)
+            
+            observeTimekeeper()
+        }
+    }
+
+    fileprivate func observeTimekeeper() {
         cancellable = timeKeeper?.$state.sink { [weak self] state in
             self?.render(state)
         }
-
+        
         observers = [
             timeKeeper!.observe(\.whitePlayer.remainingTime, options: .new) { (tk, change) in
                 self.whiteClockLabel.text = tk.whitePlayer.remainingTime.stringFromTimeInterval()
@@ -304,30 +352,6 @@ class ClockViewController: UIViewController {
                 self.render((self.timeKeeper?.state)!)
             }
         ]
-    }
-    
-    @objc func switchTurn(_ sender: UITapGestureRecognizer) throws {
-        if timeKeeper?.state == .notStarted {
-            try timeKeeper?.start(player: timeKeeper!.playerInTurn!)
-        } else {
-            timeKeeper?.switchTurn()
-        }
-    }
-    
-    @objc func pauseButton(_ sender: UIButton) throws {
-        if timeKeeper?.state == .paused {
-            try timeKeeper?.start(player: timeKeeper!.playerInTurn!)
-        } else {
-            timeKeeper?.pause()
-        }
-    }
-    
-    // Stop should behave like restart.
-    @objc func stopButton(_ sender: UIButton) {
-        if timeKeeper?.state == .paused {
-            timeKeeper?.stop()
-//            timeKeeper = Timekeeper()
-        }
     }
  
     

@@ -40,7 +40,7 @@ import Foundation
         self.state = .notStarted
     }
     
-    public func start(player: Player) throws {
+    public func start(_ player: Player) throws {
         guard self.state != .stopped else { throw Error.restartNotAllowed }
         
         // If we're starting the player who's already running, just return.
@@ -85,10 +85,6 @@ import Foundation
         self.playerInTurn = nil
         self.state = .stopped
     }
-    
-//    public func restart() {
-//        stop()
-//    }
     
     // If clock isn't running, this will start the timer.
     public func switchTurn() {
