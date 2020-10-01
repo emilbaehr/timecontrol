@@ -139,24 +139,24 @@ class ClockViewController: UIViewController {
         blackClock.isUserInteractionEnabled = true
         
         notStartedConstraints = [
-            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.5, constant: -82),
-            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.5, constant: -82)
+            whiteClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.5, constant: -46),
+            blackClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.5, constant: -46)
         ]
         NSLayoutConstraint.activate(notStartedConstraints)
         
         whiteTurnConstraints = [
-            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.67, constant: -82),
-            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.33, constant: -82)
+            whiteClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.67, constant: -46),
+            blackClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.33, constant: -46)
         ]
         
         blackTurnConstraints = [
-            whiteClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.33, constant: -82),
-            blackClock.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.67, constant: -82)
+            whiteClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.33, constant: -46),
+            blackClock.heightAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.heightAnchor, multiplier: 0.67, constant: -46)
         ]
         
         clockConstraints = [
             blackClock.widthAnchor.constraint(equalTo: rootView.widthAnchor, constant: -16),
-            blackClock.topAnchor.constraint(equalTo: rootView.topAnchor, constant: 44),
+            blackClock.topAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.topAnchor, constant: 8),
             blackClock.centerXAnchor.constraint(equalTo: rootView.centerXAnchor),
             
             whiteClock.widthAnchor.constraint(equalTo: rootView.widthAnchor, constant: -16),
