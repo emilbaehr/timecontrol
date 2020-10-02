@@ -11,7 +11,7 @@ import Foundation
 
     private weak var timer: Timer?
     
-    private var start: Date? // When the timer was started.
+    private var start: Date? // Start time of current timing.
     
     @objc dynamic var whitePlayer: Player
     @objc dynamic var blackPlayer: Player
@@ -24,7 +24,7 @@ import Foundation
     
     @Published public private(set) var state: State
 
-    enum State {
+    enum State: Equatable {
         case notStarted
         case running
         case paused
@@ -34,44 +34,59 @@ import Foundation
     init(whitePlayerTime: TimeControl, blackPlayerTime: TimeControl) {
         self.whitePlayer = Player(timeControl: whitePlayerTime)
         self.blackPlayer = Player(timeControl: blackPlayerTime)
-        
-        // Always begin as white.
-        self.playerInTurn = whitePlayer
         self.state = .notStarted
     }
+
+    // Record the current timing and add to the ongoing duration for the player.
+    fileprivate func recordTime(for player: Player, from start: Date, to now: Date) {
+        player.duration += Date().timeIntervalSince(start) + Date().timeIntervalSince(now)
+        self.timer?.invalidate()
+        self.timer = nil
+        self.start = nil
+    }
     
-    public func start(_ player: Player) throws {
+    public func start(_ player: Player? = nil) throws {
+        
+        // If Timekeeper was stopped, do not allow restart.
         guard self.state != .stopped else { throw Error.restartNotAllowed }
         
         // If we're starting the player who's already running, just return.
-//        guard player != self.playerInTurn || self.state == .paused else { return }
-        guard player == self.whitePlayer || player == self.blackPlayer else { throw Error.unknownPlayer }
+        guard player == nil || player != self.playerInTurn || self.state == .paused else { return }
+        guard player == nil || player == self.whitePlayer || player == self.blackPlayer else { throw Error.unknownPlayer }
+        
+        print("Starts?")
+            
+        // If a player is started, start it. Else, start the player in turn, or start white player.
+        let nextPlayer = player ?? self.playerInTurn ?? self.whitePlayer
         
         let now = Date()
-        
-        let nextPlayer = player
+    
+        if let previousPlayer = playerInTurn, let startOfCurrentTiming = start {
+            recordTime(for: previousPlayer, from: startOfCurrentTiming, to: now)
+        }
         
         self.start = now
-        if nextPlayer != self.playerInTurn {
-            self.playerInTurn = nextPlayer
-        }
         
-        if self.state != .running {
-            self.state = .running
-        }
+        // The active player becomes the next player.
+        self.playerInTurn = nextPlayer
+        
+        self.state = .running
         
         self.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
     }
     
     public func pause() {
-        
-        guard self.state == .running else { return }
 
+        guard self.state == .running else { return }
+        guard let player = playerInTurn else { fatalError("No player in turn.") }
+        guard let startOfCurrentTiming = self.start else { fatalError("Someone forgot to jot down the start of the current timing.") }
+
+        let now = Date()
+        recordTime(for: player, from: startOfCurrentTiming, to: now)
+        
         // Just set the timer to nil.
         timer?.invalidate()
         self.timer = nil
-        
-        // Leave player in turn.
         self.state = .paused
     }
     
@@ -87,20 +102,22 @@ import Foundation
     }
     
     // If clock isn't running, this will start the timer.
-    public func switchTurn() {
-        playerInTurn = playerOutOfTurn
+    public func switchTurn() throws {
+        try start(playerOutOfTurn!)
+//        playerInTurn = playerOutOfTurn
     }
     
     @objc func updateTime() {
         
-        playerInTurn?.remainingTime = remainingTime(for: playerInTurn!)
-        print("White: \(whitePlayer.remainingTime)")
-        print("Black: \(blackPlayer.remainingTime)")
-    }
-    
-    func remainingTime(for player: Player) -> TimeInterval {
-//        return player.timeControl.bookedTime - Date().timeIntervalSince(start!)
-        return player.remainingTime - 1.0
+        let now = Date()
+        
+        if let timing = self.start, let booked = playerInTurn?.timeControl.bookedTime, let duration = playerInTurn?.duration {
+            let time = (booked - Date().timeIntervalSince(timing) + Date().timeIntervalSince(now) - duration)
+            playerInTurn?.remainingTime = time
+        }
+        
+        print("White: " + whitePlayer.remainingTime.stringFromTimeInterval())
+        print("Black: " + blackPlayer.remainingTime.stringFromTimeInterval())
     }
     
 }
@@ -113,10 +130,16 @@ extension Timekeeper {
         @objc dynamic var remainingTime: TimeInterval
 
         public let timeControl: TimeControl
+        var duration: TimeInterval
         
         init(timeControl: TimeControl) {
             self.timeControl = timeControl
             self.remainingTime = timeControl.bookedTime
+            self.duration = 0
+        }
+        
+        public static func ==(lhs: Player, rhs: Player) -> Bool {
+            lhs === rhs
         }
     }
     
