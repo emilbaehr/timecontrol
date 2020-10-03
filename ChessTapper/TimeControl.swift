@@ -7,12 +7,12 @@
 
 import Foundation
 
-@objc class TimeControl: NSObject {
+protocol TimeControl {
     
-    let bookedTime: TimeInterval
+    var bookedTime: TimeInterval { get set }
     
-    init(of seconds: TimeInterval) {
-        self.bookedTime = seconds
-    }
+    init(of seconds: TimeInterval)
+    
+    func calculateRemainingTime(for player: Timekeeper.Player, with timing: Timekeeper.Timing) -> TimeInterval
     
 }

@@ -102,12 +102,16 @@ import Foundation
     
     @objc func updateTime() {
         
-        let now = Date()
-        
-        if let timing = self.start, let booked = playerInTurn?.timeControl.bookedTime, let duration = playerInTurn?.duration {
-            let time = (booked - Date().timeIntervalSince(timing) + Date().timeIntervalSince(now) - duration)
+        if let startOfTiming = self.start, let player = playerInTurn {
+            let timing = Timing(start: startOfTiming, end: Date())
+            guard let time = playerInTurn?.timeControl.calculateRemainingTime(for: player, with: timing) else { return }
             playerInTurn?.remainingTime = time
         }
+        
+//        if let timing = self.start, let booked = playerInTurn?.timeControl.bookedTime, let duration = playerInTurn?.timesheet.duration {
+//            let time = (booked - Date().timeIntervalSince(timing) + Date().timeIntervalSince(now) - duration)
+//            playerInTurn?.remainingTime = time
+//        }
         
         print("White: " + whitePlayer.remainingTime.stringFromTimeInterval())
         print("Black: " + blackPlayer.remainingTime.stringFromTimeInterval())
@@ -115,7 +119,7 @@ import Foundation
     
     // Record the current timing and add to the ongoing duration for the player.
     fileprivate func recordTime(for player: Player, from start: Date, to now: Date) {
-        player.duration += Date().timeIntervalSince(start) + Date().timeIntervalSince(now)
+        player.timesheet.duration += Date().timeIntervalSince(start) + Date().timeIntervalSince(now)
         self.timer?.invalidate()
         self.timer = nil
         self.start = nil
@@ -131,17 +135,23 @@ extension Timekeeper {
         public let timeControl: TimeControl
         
         @objc dynamic var remainingTime: TimeInterval
-        var duration: TimeInterval
+        
+        struct Timesheet {
+            var duration: TimeInterval
+        }
+        
+        var timesheet: Timesheet
         
         init(timeControl: TimeControl) {
             self.timeControl = timeControl
             self.remainingTime = timeControl.bookedTime
-            self.duration = 0
+            self.timesheet = Timesheet(duration: 0)
         }
         
         public static func ==(lhs: Player, rhs: Player) -> Bool {
             lhs === rhs
         }
+        
     }
     
 }
@@ -156,7 +166,17 @@ extension Timekeeper {
     }
 }
 
-// MARK: -
+// MARK: - Types
+extension Timekeeper {
+    
+    struct Timing {
+        var start: Date
+        var end: Date
+    }
+    
+}
+
+// MARK: - Formatting
 extension TimeInterval {
 
     func stringFromTimeInterval() -> String {
