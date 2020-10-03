@@ -197,19 +197,15 @@ class ClockViewController: UIViewController {
     
     fileprivate func layoutLabels() {
         let labelConstraints = [
-            whiteClockLabel.widthAnchor.constraint(equalTo: whiteClock.widthAnchor),
             whiteClockLabel.centerXAnchor.constraint(equalTo: whiteClock.centerXAnchor),
             whiteClockLabel.centerYAnchor.constraint(equalTo: whiteClock.centerYAnchor),
             
-            blackClockLabel.widthAnchor.constraint(equalTo: blackClock.widthAnchor),
             blackClockLabel.centerXAnchor.constraint(equalTo: blackClock.centerXAnchor),
             blackClockLabel.centerYAnchor.constraint(equalTo: blackClock.centerYAnchor),
             
-            whiteClockSecondaryLabel.widthAnchor.constraint(equalTo: whiteClock.widthAnchor),
             whiteClockSecondaryLabel.centerXAnchor.constraint(equalTo: whiteClock.centerXAnchor),
             whiteClockSecondaryLabel.bottomAnchor.constraint(equalTo: whiteClock.bottomAnchor, constant: -24),
             
-            blackClockSecondaryLabel.widthAnchor.constraint(equalTo: blackClock.widthAnchor),
             blackClockSecondaryLabel.centerXAnchor.constraint(equalTo: blackClock.centerXAnchor),
             blackClockSecondaryLabel.topAnchor.constraint(equalTo: blackClock.topAnchor, constant: 24),
         ]
@@ -229,7 +225,6 @@ class ClockViewController: UIViewController {
                 
                 pauseButton.isEnabled = false
                 stopButton.isEnabled = false
-                
                 break
                 
             case .running:

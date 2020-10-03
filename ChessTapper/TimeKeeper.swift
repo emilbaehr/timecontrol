@@ -36,14 +36,6 @@ import Foundation
         self.blackPlayer = Player(timeControl: blackPlayerTime)
         self.state = .notStarted
     }
-
-    // Record the current timing and add to the ongoing duration for the player.
-    fileprivate func recordTime(for player: Player, from start: Date, to now: Date) {
-        player.duration += Date().timeIntervalSince(start) + Date().timeIntervalSince(now)
-        self.timer?.invalidate()
-        self.timer = nil
-        self.start = nil
-    }
     
     public func start(_ player: Player? = nil) throws {
         
@@ -72,7 +64,8 @@ import Foundation
         
         self.state = .running
         
-        self.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
+        self.timer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
+        timer?.tolerance = 0.01
     }
     
     public func pause() {
@@ -103,8 +96,8 @@ import Foundation
     
     // If clock isn't running, this will start the timer.
     public func switchTurn() throws {
-        try start(playerOutOfTurn!)
-//        playerInTurn = playerOutOfTurn
+        guard let nextPlayer = playerOutOfTurn else { return }
+        try start(nextPlayer)
     }
     
     @objc func updateTime() {
@@ -120,6 +113,14 @@ import Foundation
         print("Black: " + blackPlayer.remainingTime.stringFromTimeInterval())
     }
     
+    // Record the current timing and add to the ongoing duration for the player.
+    fileprivate func recordTime(for player: Player, from start: Date, to now: Date) {
+        player.duration += Date().timeIntervalSince(start) + Date().timeIntervalSince(now)
+        self.timer?.invalidate()
+        self.timer = nil
+        self.start = nil
+    }
+    
 }
 
 // MARK: -
@@ -127,9 +128,9 @@ extension Timekeeper {
 
     @objc public class Player: NSObject {
         
-        @objc dynamic var remainingTime: TimeInterval
-
         public let timeControl: TimeControl
+        
+        @objc dynamic var remainingTime: TimeInterval
         var duration: TimeInterval
         
         init(timeControl: TimeControl) {
@@ -160,6 +161,8 @@ extension TimeInterval {
 
     func stringFromTimeInterval() -> String {
 
+        // TO-DO: Rounding.
+        
         // Get the time of the TimeInterval object, in seconds.
         let time = NSInteger(self)
 
