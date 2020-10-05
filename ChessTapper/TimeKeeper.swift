@@ -9,7 +9,7 @@ import Foundation
 
 @objc class Timekeeper: NSObject, ObservableObject {
 
-    private weak var timer: Timer?
+    private var timer: Timer?
     
     private var start: Date? // Start time of current timing.
     
@@ -45,8 +45,6 @@ import Foundation
         // If we're starting the player who's already running, just return.
         guard player == nil || player != self.playerInTurn || self.state == .paused else { return }
         guard player == nil || player == self.whitePlayer || player == self.blackPlayer else { throw Error.unknownPlayer }
-        
-        print("Starts?")
             
         // If a player is started, start it. Else, start the player in turn, or start white player.
         let nextPlayer = player ?? self.playerInTurn ?? self.whitePlayer
@@ -64,8 +62,17 @@ import Foundation
         
         self.state = .running
         
-        self.timer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
+        self.timer = Timer(fireAt: Date().addingTimeInterval(nextPlayer.timeControl.delay),
+                           interval: 0.01,
+                           target: self,
+                           selector: #selector(updateTime),
+                           userInfo: nil,
+                           repeats: true)
         timer?.tolerance = 0.01
+        
+        if let timer = self.timer {
+            RunLoop.main.add(timer, forMode: RunLoop.Mode.default)
+        }
     }
     
     public func pause() {
@@ -97,13 +104,18 @@ import Foundation
     // If clock isn't running, this will start the timer.
     public func switchTurn() throws {
         guard let nextPlayer = playerOutOfTurn else { return }
+        
+//        playerInTurn?.remainingTime += (playerInTurn?.timeControl.increment)!
+        
         try start(nextPlayer)
     }
     
     @objc func updateTime() {
         
         if let startOfTiming = self.start, let player = playerInTurn {
+            
             let timing = Timing(start: startOfTiming, end: Date())
+            
             guard let time = playerInTurn?.timeControl.calculateRemainingTime(for: player, with: timing) else { return }
             playerInTurn?.remainingTime = time
         }

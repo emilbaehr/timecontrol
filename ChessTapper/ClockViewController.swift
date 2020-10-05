@@ -23,6 +23,12 @@ class ClockViewController: UIViewController {
     let settingsButton = UIButton(type: .custom)
     let stopButton = UIButton(type: .custom)
     let pauseButton = UIButton(type: .custom)
+    
+    // Gesture recognisers:
+    var stopTap: UITapGestureRecognizer!
+    var pauseTap: UITapGestureRecognizer!
+    var whiteClockTap: UITapGestureRecognizer!
+    var blackClockTap: UITapGestureRecognizer!
         
     // Observers:
     private var observers = [NSKeyValueObservation]()
@@ -105,7 +111,7 @@ class ClockViewController: UIViewController {
         stopButton.overrideUserInterfaceStyle = .dark
         stopButton.tintColor = .label
         stopButton.translatesAutoresizingMaskIntoConstraints = false
-        let stopTap = UITapGestureRecognizer(target: self, action: #selector(stopButton(_:)))
+        stopTap = UITapGestureRecognizer(target: self, action: #selector(stopButton(_:)))
         stopButton.addGestureRecognizer(stopTap)
         
         pauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
@@ -116,7 +122,7 @@ class ClockViewController: UIViewController {
         pauseButton.backgroundColor = .secondarySystemGroupedBackground
         pauseButton.tintColor = .label
         pauseButton.translatesAutoresizingMaskIntoConstraints = false
-        let pauseTap = UITapGestureRecognizer(target: self, action: #selector(pauseButton(_:)))
+        pauseTap = UITapGestureRecognizer(target: self, action: #selector(pauseButton(_:)))
         pauseButton.addGestureRecognizer(pauseTap)
         
         whiteClock.addSubview(whiteClockLabel)
@@ -131,8 +137,8 @@ class ClockViewController: UIViewController {
         rootView.addSubview(stopButton)
         rootView.addSubview(pauseButton)
         
-        let whiteClockTap = UITapGestureRecognizer(target: self, action:  #selector(switchTurn(_:)))
-        let blackClockTap = UITapGestureRecognizer(target: self, action:  #selector(switchTurn(_:)))
+        whiteClockTap = UITapGestureRecognizer(target: self, action:  #selector(switchTurn(_:)))
+        blackClockTap = UITapGestureRecognizer(target: self, action:  #selector(switchTurn(_:)))
         whiteClock.addGestureRecognizer(whiteClockTap)
         blackClock.addGestureRecognizer(blackClockTap)
         whiteClock.isUserInteractionEnabled = true
@@ -225,6 +231,9 @@ class ClockViewController: UIViewController {
                 
                 pauseButton.isEnabled = false
                 stopButton.isEnabled = false
+                
+                whiteClockTap.isEnabled = false
+                blackClockTap.isEnabled = true
                 break
                 
             case .running:
@@ -238,12 +247,16 @@ class ClockViewController: UIViewController {
                     whiteClockSecondaryLabel.text = "Your Turn"
                     whiteClockSecondaryLabel.isHidden = false
                     blackClockSecondaryLabel.isHidden = true
+                    whiteClockTap.isEnabled = true
+                    blackClockTap.isEnabled = false
                 } else {
                     NSLayoutConstraint.deactivate(whiteTurnConstraints)
                     NSLayoutConstraint.activate(blackTurnConstraints)
                     blackClockSecondaryLabel.text = "Your Turn"
                     blackClockSecondaryLabel.isHidden = false
                     whiteClockSecondaryLabel.isHidden = true
+                    whiteClockTap.isEnabled = false
+                    blackClockTap.isEnabled = true
                 }
                 
                 settingsButton.isHidden = true
@@ -269,6 +282,9 @@ class ClockViewController: UIViewController {
                 stopButton.isHidden = false
                 stopButton.isEnabled = true
                 pauseButton.isEnabled = true
+                
+                whiteClockTap.isEnabled = false
+                blackClockTap.isEnabled = false
                 break
             }
         

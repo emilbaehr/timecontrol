@@ -10,6 +10,8 @@ import Foundation
 protocol TimeControl {
     
     var bookedTime: TimeInterval { get set }
+    var increment: TimeInterval { get set }
+    var delay: TimeInterval { get set }
     
     init(of seconds: TimeInterval)
     
