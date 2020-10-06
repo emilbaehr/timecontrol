@@ -45,7 +45,7 @@ class ClockViewController: UIViewController {
         let rootView = UIView()
         rootView.backgroundColor = .black
         
-        timeControl = SuddenDeath(of: 300)
+        timeControl = Bronstein(of: 300)
         
         if let timeControl = self.timeControl {
             timeKeeper = Timekeeper(whitePlayerTime: timeControl, blackPlayerTime: timeControl)

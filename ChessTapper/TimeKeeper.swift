@@ -53,6 +53,9 @@ import Foundation
     
         if let previousPlayer = playerInTurn, let startOfCurrentTiming = start {
             recordTime(for: previousPlayer, from: startOfCurrentTiming, to: now)
+            self.timer?.invalidate()
+            self.timer = nil
+            self.start = nil
         }
         
         self.start = now
@@ -62,6 +65,8 @@ import Foundation
         
         self.state = .running
         
+        // TO-DO: The fireAt with delay of timecontrol does not take into account pausing. Pause creates new delays, which it shouldn't.
+        // TO-DO: Stop the timer and notify that game's finished when a player time becomes 0.
         self.timer = Timer(fireAt: Date().addingTimeInterval(nextPlayer.timeControl.delay),
                            interval: 0.01,
                            target: self,
@@ -104,9 +109,6 @@ import Foundation
     // If clock isn't running, this will start the timer.
     public func switchTurn() throws {
         guard let nextPlayer = playerOutOfTurn else { return }
-        
-//        playerInTurn?.remainingTime += (playerInTurn?.timeControl.increment)!
-        
         try start(nextPlayer)
     }
     
@@ -120,21 +122,15 @@ import Foundation
             playerInTurn?.remainingTime = time
         }
         
-//        if let timing = self.start, let booked = playerInTurn?.timeControl.bookedTime, let duration = playerInTurn?.timesheet.duration {
-//            let time = (booked - Date().timeIntervalSince(timing) + Date().timeIntervalSince(now) - duration)
-//            playerInTurn?.remainingTime = time
-//        }
-        
         print("White: " + whitePlayer.remainingTime.stringFromTimeInterval())
         print("Black: " + blackPlayer.remainingTime.stringFromTimeInterval())
     }
     
     // Record the current timing and add to the ongoing duration for the player.
     fileprivate func recordTime(for player: Player, from start: Date, to now: Date) {
-        player.timesheet.duration += Date().timeIntervalSince(start) + Date().timeIntervalSince(now)
-        self.timer?.invalidate()
-        self.timer = nil
-        self.start = nil
+        
+        player.timesheet.duration = player.timeControl.bookedTime - player.remainingTime
+//        player.timesheet.duration += Date().timeIntervalSince(start) + Date().timeIntervalSince(now)
     }
     
 }

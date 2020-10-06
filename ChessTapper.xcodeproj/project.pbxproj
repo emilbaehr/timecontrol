@@ -15,6 +15,8 @@
 		20D13C3D24F7D5E8007ADB63 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20D13C3C24F7D5E8007ADB63 /* Assets.xcassets */; };
 		20D13C4024F7D5E8007ADB63 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20D13C3E24F7D5E8007ADB63 /* LaunchScreen.storyboard */; };
 		20D13C4824F7D8D8007ADB63 /* Timekeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D13C4724F7D8D8007ADB63 /* Timekeeper.swift */; };
+		20E0765E252C45A4008A5E58 /* Fischer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E0765D252C45A4008A5E58 /* Fischer.swift */; };
+		20E07662252C4D72008A5E58 /* Bronstein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E07661252C4D72008A5E58 /* Bronstein.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +30,8 @@
 		20D13C3F24F7D5E8007ADB63 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		20D13C4124F7D5E8007ADB63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		20D13C4724F7D8D8007ADB63 /* Timekeeper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timekeeper.swift; sourceTree = "<group>"; };
+		20E0765D252C45A4008A5E58 /* Fischer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fischer.swift; sourceTree = "<group>"; };
+		20E07661252C4D72008A5E58 /* Bronstein.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bronstein.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +72,8 @@
 				20D13C4124F7D5E8007ADB63 /* Info.plist */,
 				20D13C4724F7D8D8007ADB63 /* Timekeeper.swift */,
 				20B2123E2528BE9200169143 /* SuddenDeath.swift */,
+				20E0765D252C45A4008A5E58 /* Fischer.swift */,
+				20E07661252C4D72008A5E58 /* Bronstein.swift */,
 				201372702520E45200AE61BF /* TimeControl.swift */,
 			);
 			path = ChessTapper;
@@ -143,8 +149,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				20B2123F2528BE9200169143 /* SuddenDeath.swift in Sources */,
+				20E0765E252C45A4008A5E58 /* Fischer.swift in Sources */,
 				20D13C3824F7D5E6007ADB63 /* ClockViewController.swift in Sources */,
 				20D13C3424F7D5E6007ADB63 /* AppDelegate.swift in Sources */,
+				20E07662252C4D72008A5E58 /* Bronstein.swift in Sources */,
 				201372712520E45200AE61BF /* TimeControl.swift in Sources */,
 				20D13C4824F7D8D8007ADB63 /* Timekeeper.swift in Sources */,
 				20D13C3624F7D5E6007ADB63 /* SceneDelegate.swift in Sources */,
