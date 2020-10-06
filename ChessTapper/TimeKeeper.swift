@@ -12,6 +12,8 @@ import Foundation
     private var timer: Timer?
     
     private var start: Date? // Start time of current timing.
+    private var paused: Date? // The time at which the game might have been paused, used for delays.
+//    private var delayBy: DateInterval?
     
     @objc dynamic var whitePlayer: Player
     @objc dynamic var blackPlayer: Player
@@ -31,68 +33,69 @@ import Foundation
         case stopped
     }
     
-    init(whitePlayerTime: TimeControl, blackPlayerTime: TimeControl) {
-        self.whitePlayer = Player(timeControl: whitePlayerTime)
-        self.blackPlayer = Player(timeControl: blackPlayerTime)
+    init(whitePlayer: TimeControl, blackPlayer: TimeControl) {
+        self.whitePlayer = Player(timeControl: whitePlayer)
+        self.blackPlayer = Player(timeControl: blackPlayer)
         self.state = .notStarted
     }
     
     public func start(_ player: Player? = nil) throws {
         
         // If Timekeeper was stopped, do not allow restart.
-        guard self.state != .stopped else { throw Error.restartNotAllowed }
+        guard state != .stopped else { throw Error.restartNotAllowed }
         
         // If we're starting the player who's already running, just return.
-        guard player == nil || player != self.playerInTurn || self.state == .paused else { return }
-        guard player == nil || player == self.whitePlayer || player == self.blackPlayer else { throw Error.unknownPlayer }
+        guard player == nil || player != playerInTurn || state == .paused else { return }
+        guard player == nil || player == whitePlayer || player == blackPlayer else { throw Error.unknownPlayer }
             
         // If a player is started, start it. Else, start the player in turn, or start white player.
-        let nextPlayer = player ?? self.playerInTurn ?? self.whitePlayer
+        let nextPlayer = player ?? playerInTurn ?? whitePlayer
         
         let now = Date()
     
         if let previousPlayer = playerInTurn, let startOfCurrentTiming = start {
             recordTime(for: previousPlayer, from: startOfCurrentTiming, to: now)
-            self.timer?.invalidate()
-            self.timer = nil
-            self.start = nil
+            timer?.invalidate()
+            timer = nil
+            start = nil
         }
         
-        self.start = now
+        start = now
+        
+//        let fireAt = self.state == .paused ? paused! : now
         
         // The active player becomes the next player.
-        self.playerInTurn = nextPlayer
-        
-        self.state = .running
-        
+        playerInTurn = nextPlayer
+                        
         // TO-DO: The fireAt with delay of timecontrol does not take into account pausing. Pause creates new delays, which it shouldn't.
         // TO-DO: Stop the timer and notify that game's finished when a player time becomes 0.
-        self.timer = Timer(fireAt: Date().addingTimeInterval(nextPlayer.timeControl.delay),
-                           interval: 0.01,
-                           target: self,
-                           selector: #selector(updateTime),
-                           userInfo: nil,
-                           repeats: true)
+        timer = Timer(fire: now.addingTimeInterval(nextPlayer.timeControl.delay), interval: 0.01, repeats: true) { timer in
+            self.updateTime()
+        }
         timer?.tolerance = 0.01
         
         if let timer = self.timer {
             RunLoop.main.add(timer, forMode: RunLoop.Mode.default)
         }
+        
+        self.state = .running
     }
     
     public func pause() {
 
-        guard self.state == .running else { return }
+        guard state == .running else { return }
         guard let player = playerInTurn else { fatalError("No player in turn.") }
-        guard let startOfCurrentTiming = self.start else { fatalError("Someone forgot to jot down the start of the current timing.") }
+        guard let startOfCurrentTiming = start else { fatalError("Someone forgot to jot down the start of the current timing.") }
 
         let now = Date()
+        paused = now
+        
         recordTime(for: player, from: startOfCurrentTiming, to: now)
         
         // Just set the timer to nil.
         timer?.invalidate()
-        self.timer = nil
-        self.state = .paused
+        timer = nil
+        state = .paused
     }
     
     public func stop() {
@@ -101,12 +104,11 @@ import Foundation
         
         // Stop everything. Can't be restarted.
         timer?.invalidate()
-        self.timer = nil
-        self.playerInTurn = nil
-        self.state = .stopped
+        timer = nil
+        playerInTurn = nil
+        state = .stopped
     }
     
-    // If clock isn't running, this will start the timer.
     public func switchTurn() throws {
         guard let nextPlayer = playerOutOfTurn else { return }
         try start(nextPlayer)
@@ -114,23 +116,20 @@ import Foundation
     
     @objc func updateTime() {
         
-        if let startOfTiming = self.start, let player = playerInTurn {
-            
+        if let startOfTiming = start, let player = playerInTurn {
             let timing = Timing(start: startOfTiming, end: Date())
-            
             guard let time = playerInTurn?.timeControl.calculateRemainingTime(for: player, with: timing) else { return }
             playerInTurn?.remainingTime = time
         }
-        
-        print("White: " + whitePlayer.remainingTime.stringFromTimeInterval())
-        print("Black: " + blackPlayer.remainingTime.stringFromTimeInterval())
+
+//        print("White: " + whitePlayer.remainingTime.stringFromTimeInterval())
+//        print("Black: " + blackPlayer.remainingTime.stringFromTimeInterval())
     }
     
     // Record the current timing and add to the ongoing duration for the player.
     fileprivate func recordTime(for player: Player, from start: Date, to now: Date) {
         
         player.timesheet.duration = player.timeControl.bookedTime - player.remainingTime
-//        player.timesheet.duration += Date().timeIntervalSince(start) + Date().timeIntervalSince(now)
     }
     
 }
@@ -144,11 +143,11 @@ extension Timekeeper {
         
         @objc dynamic var remainingTime: TimeInterval
         
+        var timesheet: Timesheet
+        
         struct Timesheet {
             var duration: TimeInterval
         }
-        
-        var timesheet: Timesheet
         
         init(timeControl: TimeControl) {
             self.timeControl = timeControl

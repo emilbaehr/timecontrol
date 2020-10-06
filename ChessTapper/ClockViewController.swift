@@ -33,7 +33,6 @@ class ClockViewController: UIViewController {
     // Observers:
     private var observers = [NSKeyValueObservation]()
     private var cancellable: AnyCancellable?
-    private var cancellable2: AnyCancellable?
     
     // Constraints:
     private var clockConstraints = [NSLayoutConstraint]()
@@ -45,10 +44,10 @@ class ClockViewController: UIViewController {
         let rootView = UIView()
         rootView.backgroundColor = .black
         
-        timeControl = Bronstein(of: 300)
+        timeControl = SuddenDeath(of: 300)
         
         if let timeControl = self.timeControl {
-            timeKeeper = Timekeeper(whitePlayerTime: timeControl, blackPlayerTime: timeControl)
+            timeKeeper = Timekeeper(whitePlayer: timeControl, blackPlayer: timeControl)
         }
         
         whiteClock.backgroundColor = .white
@@ -60,12 +59,10 @@ class ClockViewController: UIViewController {
         whiteClock.clipsToBounds = true
         whiteClock.layer.cornerRadius = 24
         whiteClock.layer.cornerCurve = .continuous
-//        whiteClock.layer.maskedCorners = [.layerMaxXMaxYCorner,.layerMinXMaxYCorner]
         
         blackClock.clipsToBounds = true
         blackClock.layer.cornerRadius = 24
         blackClock.layer.cornerCurve = .continuous
-//        blackClock.layer.maskedCorners = [.layerMinXMinYCorner,.layerMaxXMinYCorner]
         
         whiteClockLabel.text = timeKeeper?.whitePlayer.remainingTime.stringFromTimeInterval()
         whiteClockLabel.textAlignment = .center
@@ -312,7 +309,7 @@ class ClockViewController: UIViewController {
     
     @objc func pauseButton(_ sender: UIButton) throws {
         if timeKeeper?.state == .paused {
-            try timeKeeper?.start(timeKeeper!.playerInTurn!)
+            try timeKeeper?.start()
         } else {
             timeKeeper?.pause()
         }
@@ -330,7 +327,7 @@ class ClockViewController: UIViewController {
             }
 
             if let currentTimeControl = self.timeControl {
-                timeKeeper = Timekeeper(whitePlayerTime: currentTimeControl, blackPlayerTime: currentTimeControl)
+                timeKeeper = Timekeeper(whitePlayer: currentTimeControl, blackPlayer: currentTimeControl)
             }
             
             observeTimekeeper()
