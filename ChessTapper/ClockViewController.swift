@@ -44,7 +44,7 @@ class ClockViewController: UIViewController {
         let rootView = UIView()
         rootView.backgroundColor = .black
         
-        timeControl = SuddenDeath(of: 300)
+        timeControl = SuddenDeath(of: TimeInterval(5))
         
         if let timeControl = self.timeControl {
             timeKeeper = Timekeeper(whitePlayer: timeControl, blackPlayer: timeControl)
@@ -100,7 +100,7 @@ class ClockViewController: UIViewController {
         settingsButton.tintColor = .label
         settingsButton.translatesAutoresizingMaskIntoConstraints = false
 
-        stopButton.setImage(UIImage(systemName: "stop.fill"), for: .normal)
+        stopButton.setImage(UIImage(systemName: "arrow.counterclockwise"), for: .normal)
         stopButton.setPreferredSymbolConfiguration(symbolConfig, forImageIn: .normal)
         stopButton.layer.cornerRadius = 22.0
         stopButton.clipsToBounds = true
@@ -219,6 +219,8 @@ class ClockViewController: UIViewController {
         
             switch state {
             case .notStarted, .stopped:
+                NSLayoutConstraint.activate(notStartedConstraints)
+                
                 print("Not Started.")
                 blackClockSecondaryLabel.text = "Tap to Start"
                 whiteClockSecondaryLabel.text = "Waiting for Black"
@@ -228,9 +230,14 @@ class ClockViewController: UIViewController {
                 
                 pauseButton.isEnabled = false
                 stopButton.isEnabled = false
-                
+
                 whiteClockTap.isEnabled = false
                 blackClockTap.isEnabled = true
+                
+                settingsButton.isHidden = false
+                stopButton.isHidden = false
+                stopButton.isEnabled = true
+                pauseButton.isEnabled = false
                 break
                 
             case .running:
@@ -317,7 +324,7 @@ class ClockViewController: UIViewController {
     
     @objc func stopButton(_ sender: UIButton) {
 
-        if timeKeeper?.state == .paused {
+        if timeKeeper?.state == .paused || timeKeeper?.state == .stopped {
             timeKeeper?.stop()
 
             // Do some data clearing. Not sure if this should be build into the Timekeeper, though.

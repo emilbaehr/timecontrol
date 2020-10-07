@@ -10,17 +10,24 @@ import Foundation
 class Bronstein: TimeControl {
 
     var bookedTime: TimeInterval
-    var increment: TimeInterval // For testing only, move to Fischer subclass.
-    var delay: TimeInterval // For testing only, move to Bronstein subclass.
+    var increment: TimeInterval
+    var delay: TimeInterval
     
-    required init(of seconds: TimeInterval) {
+    required init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval) {
         self.bookedTime = seconds
-        self.increment = TimeInterval(0)
-        self.delay = TimeInterval(5)
+        self.increment = TimeInterval(increment)
+        self.delay = TimeInterval(delay)
+    }
+    
+    convenience init(of seconds: TimeInterval, delay: TimeInterval) {
+        self.init(of: seconds, delay: delay, increment: TimeInterval(0))
     }
     
     func calculateRemainingTime(for player: Timekeeper.Player, with timing: Timekeeper.Timing) -> TimeInterval {
-        let remainingTime = player.timeControl.bookedTime - Date().timeIntervalSince(timing.start) + Date().timeIntervalSince(timing.end) - player.timesheet.duration + delay
+        
+        // Remaining time = booked time - current timing - total duration:
+        let remainingTime = player.timeControl.bookedTime - Date().timeIntervalSince(timing.start) + Date().timeIntervalSince(timing.end) - player.timesheet.duration
+        
         return remainingTime
     }
     

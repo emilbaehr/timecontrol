@@ -13,7 +13,7 @@ protocol TimeControl {
     var increment: TimeInterval { get set }
     var delay: TimeInterval { get set }
     
-    init(of seconds: TimeInterval)
+    init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval)
     
     func calculateRemainingTime(for player: Timekeeper.Player, with timing: Timekeeper.Timing) -> TimeInterval
     

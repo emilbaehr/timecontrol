@@ -12,7 +12,7 @@ import Foundation
     private var timer: Timer?
     
     private var start: Date? // Start time of current timing.
-    private var paused: Date? // The time at which the game might have been paused, used for delays.
+    private var countdown: TimeInterval?// The time at which the game might have been paused, used for delays.
 //    private var delayBy: DateInterval?
     
     @objc dynamic var whitePlayer: Player
@@ -50,32 +50,38 @@ import Foundation
             
         // If a player is started, start it. Else, start the player in turn, or start white player.
         let nextPlayer = player ?? playerInTurn ?? whitePlayer
-        
-        let now = Date()
     
-        if let previousPlayer = playerInTurn, let startOfCurrentTiming = start {
-            recordTime(for: previousPlayer, from: startOfCurrentTiming, to: now)
+        // Record time on the player who was just in turn, before changing player.
+        if let previousPlayer = playerInTurn {
+            recordTime(for: previousPlayer)
             timer?.invalidate()
             timer = nil
             start = nil
         }
-        
-        start = now
-        
-//        let fireAt = self.state == .paused ? paused! : now
-        
+                        
         // The active player becomes the next player.
         playerInTurn = nextPlayer
-                        
-        // TO-DO: The fireAt with delay of timecontrol does not take into account pausing. Pause creates new delays, which it shouldn't.
-        // TO-DO: Stop the timer and notify that game's finished when a player time becomes 0.
-        timer = Timer(fire: now.addingTimeInterval(nextPlayer.timeControl.delay), interval: 0.01, repeats: true) { timer in
-            self.updateTime()
-        }
-        timer?.tolerance = 0.01
         
-        if let timer = self.timer {
-            RunLoop.main.add(timer, forMode: RunLoop.Mode.default)
+        // Get the TimeControl's delay before next players turn, but only if the game was not paused
+        // in which case, the timer should just use the ongoing countdown.
+        if state != .paused {
+            countdown = playerInTurn?.timeControl.delay
+        }
+                        
+        timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { timer in
+            
+            let now = Date()
+            self.start = now
+            
+            self.countdown! -= 0.01
+            
+            if let countdown = self.countdown, countdown <= 0 {
+                print(countdown)
+                self.timer?.invalidate()
+                self.timer = nil
+                self.startTimer(for: nextPlayer)
+            }
+            
         }
         
         self.state = .running
@@ -85,16 +91,13 @@ import Foundation
 
         guard state == .running else { return }
         guard let player = playerInTurn else { fatalError("No player in turn.") }
-        guard let startOfCurrentTiming = start else { fatalError("Someone forgot to jot down the start of the current timing.") }
-
-        let now = Date()
-        paused = now
         
-        recordTime(for: player, from: startOfCurrentTiming, to: now)
+        recordTime(for: player)
         
         // Just set the timer to nil.
         timer?.invalidate()
         timer = nil
+        
         state = .paused
     }
     
@@ -106,6 +109,7 @@ import Foundation
         timer?.invalidate()
         timer = nil
         playerInTurn = nil
+        
         state = .stopped
     }
     
@@ -114,12 +118,21 @@ import Foundation
         try start(nextPlayer)
     }
     
+// MARK: - Helpers
+    
     @objc func updateTime() {
         
         if let startOfTiming = start, let player = playerInTurn {
             let timing = Timing(start: startOfTiming, end: Date())
+            
             guard let time = playerInTurn?.timeControl.calculateRemainingTime(for: player, with: timing) else { return }
-            playerInTurn?.remainingTime = time
+            
+            // If the game was paused, don't add the TimeControl's increment.
+            if state == .paused, let increment = playerInTurn?.timeControl.increment {
+                playerInTurn?.remainingTime = time - increment
+            } else {
+                playerInTurn?.remainingTime = time
+            }
         }
 
 //        print("White: " + whitePlayer.remainingTime.stringFromTimeInterval())
@@ -127,14 +140,46 @@ import Foundation
     }
     
     // Record the current timing and add to the ongoing duration for the player.
-    fileprivate func recordTime(for player: Player, from start: Date, to now: Date) {
-        
+    func recordTime(for player: Player) {
         player.timesheet.duration = player.timeControl.bookedTime - player.remainingTime
+    }
+    
+    private func startTimer(for nextPlayer: Timekeeper.Player) {
+        // TO-DO: Stop the timer and notify that game's finished when a player time becomes 0.
+        timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { timer in
+            
+            self.updateTime()
+            if nextPlayer.remainingTime <= 0.00 {
+                print("Time's up!")
+                self.stop()
+            }
+            
+        }
+        timer?.tolerance = 0.01
     }
     
 }
 
-// MARK: -
+// MARK: - Errors
+extension Timekeeper {
+    
+    // Because we don't want to handle all the state and data clearing in conjunction with restarting a timekeeper from the beginning, we will throw an error. Just make a new Timekeeper.
+    public enum Error: Swift.Error {
+        case unknownPlayer
+        case restartNotAllowed
+    }
+}
+
+// MARK: - Types
+extension Timekeeper {
+    
+    struct Timing {
+        var start: Date
+        var end: Date
+    }
+    
+}
+
 extension Timekeeper {
 
     @objc public class Player: NSObject {
@@ -159,26 +204,6 @@ extension Timekeeper {
             lhs === rhs
         }
         
-    }
-    
-}
-
-// MARK: - Errors
-extension Timekeeper {
-    
-    // Because we don't want to handle all the state and data clearing in conjunction with restarting a timekeeper from the beginning, we will throw an error. Just make a new Timekeeper.
-    public enum Error: Swift.Error {
-        case unknownPlayer
-        case restartNotAllowed
-    }
-}
-
-// MARK: - Types
-extension Timekeeper {
-    
-    struct Timing {
-        var start: Date
-        var end: Date
     }
     
 }
