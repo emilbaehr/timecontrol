@@ -13,7 +13,6 @@ import Foundation
     
     private var start: Date? // Start time of current timing.
     private var countdown: TimeInterval?// The time at which the game might have been paused, used for delays.
-//    private var delayBy: DateInterval?
     
     @objc dynamic var whitePlayer: Player
     @objc dynamic var blackPlayer: Player
@@ -31,6 +30,7 @@ import Foundation
         case running
         case paused
         case stopped
+        case timesUp
     }
     
     init(whitePlayer: TimeControl, blackPlayer: TimeControl) {
@@ -145,13 +145,13 @@ import Foundation
     }
     
     private func startTimer(for nextPlayer: Timekeeper.Player) {
-        // TO-DO: Stop the timer and notify that game's finished when a player time becomes 0.
         timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { timer in
             
             self.updateTime()
             if nextPlayer.remainingTime <= 0.00 {
-                print("Time's up!")
-                self.stop()
+                self.timer?.invalidate()
+                self.timer = nil
+                self.state = .timesUp
             }
             
         }

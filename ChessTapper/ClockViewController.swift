@@ -100,7 +100,7 @@ class ClockViewController: UIViewController {
         settingsButton.tintColor = .label
         settingsButton.translatesAutoresizingMaskIntoConstraints = false
 
-        stopButton.setImage(UIImage(systemName: "arrow.counterclockwise"), for: .normal)
+        stopButton.setImage(UIImage(systemName: "stop.fill"), for: .normal)
         stopButton.setPreferredSymbolConfiguration(symbolConfig, forImageIn: .normal)
         stopButton.layer.cornerRadius = 22.0
         stopButton.clipsToBounds = true
@@ -234,11 +234,18 @@ class ClockViewController: UIViewController {
                 whiteClockTap.isEnabled = false
                 blackClockTap.isEnabled = true
                 
+            case .timesUp:
+                if timeKeeper?.playerInTurn == timeKeeper?.blackPlayer {
+                    blackClockSecondaryLabel.text = "Time's up!"
+                } else {
+                    whiteClockSecondaryLabel.text = "Time's up!"
+                }
+
                 settingsButton.isHidden = false
                 stopButton.isHidden = false
+                
                 stopButton.isEnabled = true
                 pauseButton.isEnabled = false
-                break
                 
             case .running:
                 print("Running.")
@@ -266,7 +273,6 @@ class ClockViewController: UIViewController {
                 settingsButton.isHidden = true
                 stopButton.isHidden = true
                 pauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
-                break
                 
             case .paused:
                 print("Paused.")
@@ -289,7 +295,6 @@ class ClockViewController: UIViewController {
                 
                 whiteClockTap.isEnabled = false
                 blackClockTap.isEnabled = false
-                break
             }
         
             UIView.animate(withDuration: 0.3, animations: {
