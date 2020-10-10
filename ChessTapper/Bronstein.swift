@@ -23,10 +23,20 @@ class Bronstein: TimeControl {
         self.init(of: seconds, delay: delay, increment: TimeInterval(0))
     }
     
-    func calculateRemainingTime(for player: Timekeeper.Player, with timing: Timekeeper.Timing) -> TimeInterval {
+    func calculateRemainingTime(for player: Timekeeper.Player, with timing: Timekeeper.Timing, at state: Timekeeper.State) -> TimeInterval {
+
+        var remainingTime = player.remainingTime
         
-        // Remaining time = booked time - current timing - total duration:
-        let remainingTime = player.timeControl.bookedTime - Date().timeIntervalSince(timing.start) + Date().timeIntervalSince(timing.end) - player.timesheet.duration
+        let countdown = player.timesheet.countdown
+        
+        if countdown >= 0 {
+            player.timesheet.countdown -= 0.01
+            increment = delay - countdown
+//            print(player.timesheet.countdown)
+        }
+        
+        remainingTime -= 0.01
+//        remainingTime -= Date().timeIntervalSince(timing.start) - Date().timeIntervalSince(timing.end)
         
         return remainingTime
     }

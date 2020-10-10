@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Fischer: TimeControl {
+class USDelay: TimeControl {
 
     var bookedTime: TimeInterval
     var increment: TimeInterval
@@ -19,15 +19,20 @@ class Fischer: TimeControl {
         self.delay = TimeInterval(delay)
     }
     
-    convenience init(of seconds: TimeInterval, increment: TimeInterval) {
-        self.init(of: seconds, delay: TimeInterval(0), increment: increment)
+    convenience init(of seconds: TimeInterval, delay: TimeInterval) {
+        self.init(of: seconds, delay: delay, increment: TimeInterval(0))
     }
     
     func calculateRemainingTime(for player: Timekeeper.Player, with timing: Timekeeper.Timing) -> TimeInterval {
-        
+
         var remainingTime = player.remainingTime
+        let countdown = player.timesheet.countdown
         
-        remainingTime -= 0.01
+        if countdown >= 0 {
+            player.timesheet.countdown -= 0.01
+        } else {
+            remainingTime -= 0.01
+        }
         
         return remainingTime
     }

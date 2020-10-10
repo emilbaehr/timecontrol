@@ -25,8 +25,9 @@ class SuddenDeath: TimeControl {
     
     func calculateRemainingTime(for player: Timekeeper.Player, with timing: Timekeeper.Timing) -> TimeInterval {
         
-        // Remaining time = booked time - current timing - total duration:
-        let remainingTime = player.timeControl.bookedTime - Date().timeIntervalSince(timing.start) + Date().timeIntervalSince(timing.end) - player.timesheet.duration
+        var remainingTime = player.remainingTime
+        
+        remainingTime -= 0.01
         
         return remainingTime
     }

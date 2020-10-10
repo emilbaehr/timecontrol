@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		201372712520E45200AE61BF /* TimeControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201372702520E45200AE61BF /* TimeControl.swift */; };
+		207FEB572531A5F600704289 /* USDelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207FEB562531A5F600704289 /* USDelay.swift */; };
+		207FEB5B2531B28B00704289 /* Timesheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207FEB5A2531B28B00704289 /* Timesheet.swift */; };
 		20B2123F2528BE9200169143 /* SuddenDeath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B2123E2528BE9200169143 /* SuddenDeath.swift */; };
 		20D13C3424F7D5E6007ADB63 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D13C3324F7D5E6007ADB63 /* AppDelegate.swift */; };
 		20D13C3624F7D5E6007ADB63 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D13C3524F7D5E6007ADB63 /* SceneDelegate.swift */; };
@@ -21,6 +23,8 @@
 
 /* Begin PBXFileReference section */
 		201372702520E45200AE61BF /* TimeControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeControl.swift; sourceTree = "<group>"; };
+		207FEB562531A5F600704289 /* USDelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USDelay.swift; sourceTree = "<group>"; };
+		207FEB5A2531B28B00704289 /* Timesheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timesheet.swift; sourceTree = "<group>"; };
 		20B2123E2528BE9200169143 /* SuddenDeath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuddenDeath.swift; sourceTree = "<group>"; };
 		20D13C3024F7D5E6007ADB63 /* ChessTapper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChessTapper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20D13C3324F7D5E6007ADB63 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -71,9 +75,11 @@
 				20D13C3E24F7D5E8007ADB63 /* LaunchScreen.storyboard */,
 				20D13C4124F7D5E8007ADB63 /* Info.plist */,
 				20D13C4724F7D8D8007ADB63 /* Timekeeper.swift */,
+				207FEB5A2531B28B00704289 /* Timesheet.swift */,
 				20B2123E2528BE9200169143 /* SuddenDeath.swift */,
 				20E0765D252C45A4008A5E58 /* Fischer.swift */,
 				20E07661252C4D72008A5E58 /* Bronstein.swift */,
+				207FEB562531A5F600704289 /* USDelay.swift */,
 				201372702520E45200AE61BF /* TimeControl.swift */,
 			);
 			path = ChessTapper;
@@ -148,6 +154,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				207FEB572531A5F600704289 /* USDelay.swift in Sources */,
 				20B2123F2528BE9200169143 /* SuddenDeath.swift in Sources */,
 				20E0765E252C45A4008A5E58 /* Fischer.swift in Sources */,
 				20D13C3824F7D5E6007ADB63 /* ClockViewController.swift in Sources */,
@@ -155,6 +162,7 @@
 				20E07662252C4D72008A5E58 /* Bronstein.swift in Sources */,
 				201372712520E45200AE61BF /* TimeControl.swift in Sources */,
 				20D13C4824F7D8D8007ADB63 /* Timekeeper.swift in Sources */,
+				207FEB5B2531B28B00704289 /* Timesheet.swift in Sources */,
 				20D13C3624F7D5E6007ADB63 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

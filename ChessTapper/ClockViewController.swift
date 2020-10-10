@@ -44,7 +44,7 @@ class ClockViewController: UIViewController {
         let rootView = UIView()
         rootView.backgroundColor = .black
         
-        timeControl = SuddenDeath(of: TimeInterval(5))
+        timeControl = USDelay(of: 20, delay: 5)
         
         if let timeControl = self.timeControl {
             timeKeeper = Timekeeper(whitePlayer: timeControl, blackPlayer: timeControl)
@@ -378,7 +378,9 @@ class ClockViewController: UIViewController {
 
 // MARK: - Extension for using SF Pro Rounded.
 extension UIFont {
+    
     class func rounded(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {
+        
         let systemFont = UIFont.monospacedDigitSystemFont(ofSize: size, weight: weight)
         let font: UIFont
         
@@ -387,6 +389,8 @@ extension UIFont {
         } else {
             font = systemFont
         }
+        
         return font
     }
+    
 }
