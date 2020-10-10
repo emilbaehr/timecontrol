@@ -18,27 +18,29 @@ class Bronstein: TimeControl {
         self.bookedTime = seconds
         self.increment = TimeInterval(increment)
         self.delay = TimeInterval(delay)
-        self.countdown = TimeInterval(delay)
+        self.countdown = delay
     }
     
-    convenience init(of seconds: TimeInterval, delay: TimeInterval) {
-        self.init(of: seconds, delay: delay, increment: TimeInterval(0))
+    convenience init(of seconds: TimeInterval) {
+        self.init(of: seconds, delay: TimeInterval(0), increment: TimeInterval(0))
     }
     
-    func calculateRemainingTime(for player: Timekeeper.Player, with timing: Timekeeper.Timing) -> TimeInterval {
-
-        var remainingTime = player.remainingTime
+    func calculateRemainingTime(for remainingTime: TimeInterval, with interval: DateInterval) -> TimeInterval {
         
-        if countdown >= 0 {
-            countdown -= 0.01
-            increment = delay - countdown
-//            print(player.timesheet.countdown)
+        var remaining = remainingTime
+        
+        if countdown > 0 {
+            countdown -= interval.duration
         }
         
-        remainingTime -= 0.01
-//        remainingTime -= Date().timeIntervalSince(timing.start) - Date().timeIntervalSince(timing.end)
-        
-        return remainingTime
+        remaining -= interval.duration
+
+        return remaining
+    }
+    
+    func incrementAfter() -> TimeInterval {
+        let unusedTime = delay - countdown
+        return unusedTime
     }
     
 }

@@ -16,6 +16,8 @@ protocol TimeControl {
     
     init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval)
     
-    func calculateRemainingTime(for player: Timekeeper.Player, with timing: Timekeeper.Timing) -> TimeInterval
+    func calculateRemainingTime(for remainingTime: TimeInterval, with interval: DateInterval) -> TimeInterval
+    
+    func incrementAfter() -> TimeInterval
     
 }
