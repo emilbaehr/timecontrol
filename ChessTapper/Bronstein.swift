@@ -16,8 +16,8 @@ class Bronstein: TimeControl {
     
     required init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval) {
         self.bookedTime = seconds
-        self.increment = TimeInterval(increment)
-        self.delay = TimeInterval(delay)
+        self.increment = increment
+        self.delay = delay
         self.countdown = delay
     }
     
@@ -31,6 +31,8 @@ class Bronstein: TimeControl {
         
         if countdown > 0 {
             countdown -= interval.duration
+        } else {
+            countdown = 0
         }
         
         remaining -= interval.duration

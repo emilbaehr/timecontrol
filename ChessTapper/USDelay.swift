@@ -7,7 +7,7 @@
 
 import Foundation
 
-class SuddenDeath: TimeControl {
+class USDelay: TimeControl {
 
     var bookedTime: TimeInterval
     var increment: TimeInterval
@@ -26,7 +26,16 @@ class SuddenDeath: TimeControl {
     }
     
     func calculateRemainingTime(for remainingTime: TimeInterval, with interval: DateInterval) -> TimeInterval {
-        return remainingTime - interval.duration
+        
+        var remaining = remainingTime
+        
+        if countdown > 0 {
+            countdown -= interval.duration
+        } else {
+            remaining -= interval.duration
+        }
+
+        return remaining
     }
     
     func incrementAfter() -> TimeInterval {

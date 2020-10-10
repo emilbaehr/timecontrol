@@ -17,6 +17,7 @@
 		20D13C4024F7D5E8007ADB63 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20D13C3E24F7D5E8007ADB63 /* LaunchScreen.storyboard */; };
 		20D13C4824F7D8D8007ADB63 /* Timekeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D13C4724F7D8D8007ADB63 /* Timekeeper.swift */; };
 		20E07662252C4D72008A5E58 /* Bronstein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E07661252C4D72008A5E58 /* Bronstein.swift */; };
+		20FB52F1253230B900C96E45 /* USDelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FB52F0253230B900C96E45 /* USDelay.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		20D13C4124F7D5E8007ADB63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		20D13C4724F7D8D8007ADB63 /* Timekeeper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timekeeper.swift; sourceTree = "<group>"; };
 		20E07661252C4D72008A5E58 /* Bronstein.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bronstein.swift; sourceTree = "<group>"; };
+		20FB52F0253230B900C96E45 /* USDelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USDelay.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 				207FEB5A2531B28B00704289 /* Player.swift */,
 				20B2123E2528BE9200169143 /* SuddenDeath.swift */,
 				20E07661252C4D72008A5E58 /* Bronstein.swift */,
+				20FB52F0253230B900C96E45 /* USDelay.swift */,
 				201372702520E45200AE61BF /* TimeControl.swift */,
 			);
 			path = ChessTapper;
@@ -148,6 +151,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20FB52F1253230B900C96E45 /* USDelay.swift in Sources */,
 				20B2123F2528BE9200169143 /* SuddenDeath.swift in Sources */,
 				20D13C3824F7D5E6007ADB63 /* ClockViewController.swift in Sources */,
 				20D13C3424F7D5E6007ADB63 /* AppDelegate.swift in Sources */,
