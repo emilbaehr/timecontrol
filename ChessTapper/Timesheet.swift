@@ -10,12 +10,10 @@ import Foundation
 public class Timesheet {
     
     var duration: TimeInterval
-    var countdown: TimeInterval
     var moves: Int
     
     init() {
         self.duration = 0.00
-        self.countdown = 0.00
         self.moves = 0
     }
     
