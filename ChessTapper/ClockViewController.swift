@@ -44,7 +44,7 @@ class ClockViewController: UIViewController {
         let rootView = UIView()
         rootView.backgroundColor = .black
         
-        timeControl = Fischer(of: 20, delay: 5, increment: 3)
+        timeControl = Bronstein(of: 20, delay: 5, increment: 3)
         
         if let timeControl = self.timeControl {
             timeKeeper = Timekeeper(whitePlayer: timeControl, blackPlayer: timeControl)

@@ -12,7 +12,6 @@ protocol TimeControl {
     var bookedTime: TimeInterval { get }
     var increment: TimeInterval { get }
     var delay: TimeInterval { get }
-    var countdown: TimeInterval { get set }
     
     init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval)
     
@@ -23,3 +22,11 @@ protocol TimeControl {
     func incrementBefore() -> TimeInterval
     
 }
+
+//extension TimeControl {
+//
+//    func incrementBefore() -> TimeInterval {
+//        return TimeInterval(0)
+//    }
+//
+//}

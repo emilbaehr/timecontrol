@@ -12,6 +12,7 @@ class Bronstein: TimeControl {
     var bookedTime: TimeInterval
     var increment: TimeInterval
     var delay: TimeInterval
+    
     var countdown: TimeInterval
     
     required init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval) {
@@ -40,6 +41,7 @@ class Bronstein: TimeControl {
     
     func incrementAfter() -> TimeInterval {
         let unusedTime = delay - countdown
+        countdown = delay
         return unusedTime
     }
     

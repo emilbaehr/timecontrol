@@ -13,31 +13,35 @@ import Foundation
     
     var timeControl: TimeControl
     
-    var moves: Int
-    var records = [Record]()
+    var move: Int
+    var moves = [Move]()
     
     // A time sheet record for a move.
-    public struct Record {
-        let timestamp: Date // When the registration was made
-        let duration: TimeInterval // Time spent on the move
-        let increment: TimeInterval // The increment added after the move
+    public struct Move {
+        let move: Int
+        let timestamp: Date // When the registration was made.
+        let duration: TimeInterval // Time spent on the move.
+        let increment: TimeInterval // The increment added after the move.
     }
     
     init(timeControl: TimeControl) {
         self.remainingTime = timeControl.bookedTime
         self.timeControl = timeControl
-        self.moves = 0
-        self.records = []
+        self.move = 0
+        self.moves = []
     }
     
-//    // Record the most recent timing and add to players timesheet.
-//    func recordTime(from start: Date, to end: Date) {
-//        
-//        let interval = DateInterval(start: start, end: end)
-//        let record = Record(timestamp: interval.start, duration: interval.duration, increment: 0)
-//        records.append(record)
-//        
-//    }
+    // Record the most recent move and add to players timesheet of moves.
+    // TO-DO: Calculate duration of move. Is that including or excluding the increment? What about delay?
+    func recordMove(from start: Date) {
+
+        move += 1
+        let record = Move(move: move, timestamp: start, duration: 0, increment: 0)
+        moves.append(record)
+        
+        print("Move: \(record.move)")
+        print("Timestamp: \(record.timestamp)")
+    }
     
     func updateRemainingTime(with interval: DateInterval) {
         remainingTime = timeControl.calculateRemainingTime(for: remainingTime, with: interval)
@@ -45,17 +49,12 @@ import Foundation
     
     // This function will be called after the players turn.
     func incrementAfter() {
-//        TO-DO: A TimeControl function to return the increment / unused delay.
         remainingTime += timeControl.incrementAfter()
     }
     
     // This function will be called at the beginning of the players turn.
     func incrementBefore() {
         remainingTime += timeControl.incrementBefore()
-    }
-    
-    func resetCountdown() {
-        timeControl.countdown = timeControl.delay
     }
     
     public static func ==(lhs: Player, rhs: Player) -> Bool {
