@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Bronstein: TimeControl {
+class Fischer: TimeControl {
 
     var bookedTime: TimeInterval
     var increment: TimeInterval
@@ -26,25 +26,15 @@ class Bronstein: TimeControl {
     }
     
     func calculateRemainingTime(for remainingTime: TimeInterval, with interval: DateInterval) -> TimeInterval {
-        
-        var remaining = remainingTime
-        
-        if countdown > 0 {
-            countdown = max(0, countdown - interval.duration)
-        }
-        
-        remaining -= interval.duration
-
-        return remaining
+        return remainingTime - interval.duration
     }
     
     func incrementAfter() -> TimeInterval {
-        let unusedTime = delay - countdown
-        return unusedTime
+        return TimeInterval(0)
     }
     
     func incrementBefore() -> TimeInterval {
-        return TimeInterval(0)
+        return increment
     }
     
 }

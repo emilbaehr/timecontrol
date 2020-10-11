@@ -51,8 +51,7 @@ import Foundation
     
     // This function will be called at the beginning of the players turn.
     func incrementBefore() {
-//        TO-DO: A TimeControl function to return the increment / unused delay.
-//        remainingTime += timeControl.delay
+        remainingTime += timeControl.incrementBefore()
     }
     
     func resetCountdown() {

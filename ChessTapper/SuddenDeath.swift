@@ -33,4 +33,8 @@ class SuddenDeath: TimeControl {
         return TimeInterval(0)
     }
     
+    func incrementBefore() -> TimeInterval {
+        return TimeInterval(0)
+    }
+    
 }

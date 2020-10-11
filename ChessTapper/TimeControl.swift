@@ -9,9 +9,9 @@ import Foundation
 
 protocol TimeControl {
     
-    var bookedTime: TimeInterval { get set }
-    var increment: TimeInterval { get set }
-    var delay: TimeInterval { get set }
+    var bookedTime: TimeInterval { get }
+    var increment: TimeInterval { get }
+    var delay: TimeInterval { get }
     var countdown: TimeInterval { get set }
     
     init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval)
@@ -19,5 +19,7 @@ protocol TimeControl {
     func calculateRemainingTime(for remainingTime: TimeInterval, with interval: DateInterval) -> TimeInterval
     
     func incrementAfter() -> TimeInterval
+
+    func incrementBefore() -> TimeInterval
     
 }
