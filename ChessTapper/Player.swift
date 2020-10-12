@@ -9,6 +9,8 @@ import Foundation
 
 @objc public class Player: NSObject {
     
+    var name: String?
+    
     @objc dynamic var remainingTime: TimeInterval
     
     var timeControl: TimeControl
@@ -23,19 +25,12 @@ import Foundation
         let increment: TimeInterval // The increment added after the move.
     }
     
-    init(timeControl: TimeControl) {
+    init(timeControl: TimeControl, name: String? = nil) {
+        self.name = name
         self.remainingTime = timeControl.bookedTime
         self.timeControl = timeControl
         self.move = 1
         self.moves = []
-    }
-    
-    // Record the most recent move and add to players timesheet of moves.
-    // TO-DO: Calculate duration of move. Is that including or excluding the increment? What about delay?
-    func recordTime(from start: Date, to end: Date) {
-        let interval = DateInterval(start: start, end: end)
-        let record = Record(timestamp: start, duration: interval.duration, increment: 0)
-        moves.append(record)
     }
     
     // This function will be called after the players turn.
