@@ -11,6 +11,7 @@
 		2021D4F32532F2C500F191E8 /* Fischer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2021D4F22532F2C500F191E8 /* Fischer.swift */; };
 		207FEB5B2531B28B00704289 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207FEB5A2531B28B00704289 /* Player.swift */; };
 		20B2123F2528BE9200169143 /* SuddenDeath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B2123E2528BE9200169143 /* SuddenDeath.swift */; };
+		20B62A3E2534BE98003288BC /* TimeIntervalFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B62A3D2534BE98003288BC /* TimeIntervalFormatter.swift */; };
 		20D13C3424F7D5E6007ADB63 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D13C3324F7D5E6007ADB63 /* AppDelegate.swift */; };
 		20D13C3624F7D5E6007ADB63 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D13C3524F7D5E6007ADB63 /* SceneDelegate.swift */; };
 		20D13C3824F7D5E6007ADB63 /* ClockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D13C3724F7D5E6007ADB63 /* ClockViewController.swift */; };
@@ -26,6 +27,7 @@
 		2021D4F22532F2C500F191E8 /* Fischer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fischer.swift; sourceTree = "<group>"; };
 		207FEB5A2531B28B00704289 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		20B2123E2528BE9200169143 /* SuddenDeath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuddenDeath.swift; sourceTree = "<group>"; };
+		20B62A3D2534BE98003288BC /* TimeIntervalFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalFormatter.swift; sourceTree = "<group>"; };
 		20D13C3024F7D5E6007ADB63 /* ChessTapper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChessTapper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20D13C3324F7D5E6007ADB63 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		20D13C3524F7D5E6007ADB63 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 				20D13C4724F7D8D8007ADB63 /* Timekeeper.swift */,
 				207FEB5A2531B28B00704289 /* Player.swift */,
 				20B2123E2528BE9200169143 /* SuddenDeath.swift */,
+				20B62A3D2534BE98003288BC /* TimeIntervalFormatter.swift */,
 				20E07661252C4D72008A5E58 /* Bronstein.swift */,
 				2021D4F22532F2C500F191E8 /* Fischer.swift */,
 				20FB52F0253230B900C96E45 /* USDelay.swift */,
@@ -159,6 +162,7 @@
 				20D13C3824F7D5E6007ADB63 /* ClockViewController.swift in Sources */,
 				20D13C3424F7D5E6007ADB63 /* AppDelegate.swift in Sources */,
 				20E07662252C4D72008A5E58 /* Bronstein.swift in Sources */,
+				20B62A3E2534BE98003288BC /* TimeIntervalFormatter.swift in Sources */,
 				201372712520E45200AE61BF /* TimeControl.swift in Sources */,
 				2021D4F32532F2C500F191E8 /* Fischer.swift in Sources */,
 				20D13C4824F7D8D8007ADB63 /* Timekeeper.swift in Sources */,

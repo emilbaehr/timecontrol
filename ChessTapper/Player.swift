@@ -15,8 +15,8 @@ import Foundation
     
     var timeControl: TimeControl
     
-    var move: Int
-    var moves = [Record]()
+    var moves: Int
+    var records = [Record]()
     
     // A time sheet record for a move.
     public struct Record {
@@ -29,8 +29,8 @@ import Foundation
         self.name = name
         self.remainingTime = timeControl.bookedTime
         self.timeControl = timeControl
-        self.move = 1
-        self.moves = []
+        self.moves = 0
+        self.records = []
     }
     
     // This function will be called after the players turn.

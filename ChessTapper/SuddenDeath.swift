@@ -28,11 +28,11 @@ class SuddenDeath: TimeControl {
     }
     
     func incrementAfter() -> TimeInterval {
-        return TimeInterval(0)
+        return .zero
     }
     
     func incrementBefore() -> TimeInterval {
-        return TimeInterval(0)
+        return .zero
     }
     
 }

@@ -30,7 +30,7 @@ class Fischer: TimeControl {
     }
     
     func incrementAfter() -> TimeInterval {
-        return TimeInterval(0)
+        return .zero
     }
     
     func incrementBefore() -> TimeInterval {

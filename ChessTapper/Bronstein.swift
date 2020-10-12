@@ -37,7 +37,7 @@ class Bronstein: TimeControl {
     }
     
     func incrementBefore() -> TimeInterval {
-        return TimeInterval(0)
+        return .zero
     }
     
 }
