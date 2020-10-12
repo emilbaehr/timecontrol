@@ -25,8 +25,8 @@ class Fischer: TimeControl {
         self.init(of: seconds, delay: TimeInterval(0), increment: TimeInterval(0))
     }
     
-    func calculateRemainingTime(for remainingTime: TimeInterval, with interval: DateInterval) -> TimeInterval {
-        return remainingTime - interval.duration
+    func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {
+        return remainingTime - ongoing
     }
     
     func incrementAfter() -> TimeInterval {

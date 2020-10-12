@@ -12,30 +12,19 @@ class USDelay: TimeControl {
     var bookedTime: TimeInterval
     var increment: TimeInterval
     var delay: TimeInterval
-    var countdown: TimeInterval
     
     required init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval) {
         self.bookedTime = seconds
         self.increment = increment
         self.delay = delay
-        self.countdown = delay
     }
     
-    convenience init(of seconds: TimeInterval) {
-        self.init(of: seconds, delay: TimeInterval(0), increment: TimeInterval(0))
+    convenience init(of seconds: TimeInterval, delay: TimeInterval) {
+        self.init(of: seconds, delay: delay, increment: TimeInterval(0))
     }
     
-    func calculateRemainingTime(for remainingTime: TimeInterval, with interval: DateInterval) -> TimeInterval {
-        
-        var remaining = remainingTime
-        
-        if countdown > 0 {
-            countdown -= interval.duration
-        } else {
-            remaining -= interval.duration
-        }
-
-        return remaining
+    func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {        
+        return remainingTime - ongoing
     }
     
     func incrementAfter() -> TimeInterval {

@@ -12,36 +12,27 @@ class Bronstein: TimeControl {
     var bookedTime: TimeInterval
     var increment: TimeInterval
     var delay: TimeInterval
-    
-    var countdown: TimeInterval
+
+    // Compute how much of the Bronstein delay was spent.
+    var unusedTime: TimeInterval?
     
     required init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval) {
         self.bookedTime = seconds
         self.increment = increment
         self.delay = delay
-        self.countdown = delay
     }
     
     convenience init(of seconds: TimeInterval) {
         self.init(of: seconds, delay: TimeInterval(0), increment: TimeInterval(0))
     }
     
-    func calculateRemainingTime(for remainingTime: TimeInterval, with interval: DateInterval) -> TimeInterval {
-        
-        var remaining = remainingTime
-        
-        if countdown > 0 {
-            countdown = max(0, countdown - interval.duration)
-        }
-        
-        remaining -= interval.duration
-
-        return remaining
+    func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {
+        unusedTime = min(ongoing, delay)
+        return remainingTime - ongoing
     }
     
     func incrementAfter() -> TimeInterval {
-        let unusedTime = delay - countdown
-        countdown = delay
+        guard let unusedTime = self.unusedTime else { return TimeInterval(0) }
         return unusedTime
     }
     

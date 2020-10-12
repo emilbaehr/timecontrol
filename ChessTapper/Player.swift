@@ -14,12 +14,11 @@ import Foundation
     var timeControl: TimeControl
     
     var move: Int
-    var moves = [Move]()
+    var moves = [Record]()
     
     // A time sheet record for a move.
-    public struct Move {
-        let move: Int
-        let timestamp: Date // When the registration was made.
+    public struct Record {
+        let timestamp: Date // Start of the record.
         let duration: TimeInterval // Time spent on the move.
         let increment: TimeInterval // The increment added after the move.
     }
@@ -27,24 +26,16 @@ import Foundation
     init(timeControl: TimeControl) {
         self.remainingTime = timeControl.bookedTime
         self.timeControl = timeControl
-        self.move = 0
+        self.move = 1
         self.moves = []
     }
     
     // Record the most recent move and add to players timesheet of moves.
     // TO-DO: Calculate duration of move. Is that including or excluding the increment? What about delay?
-    func recordMove(from start: Date) {
-
-        move += 1
-        let record = Move(move: move, timestamp: start, duration: 0, increment: 0)
+    func recordTime(from start: Date, to end: Date) {
+        let interval = DateInterval(start: start, end: end)
+        let record = Record(timestamp: start, duration: interval.duration, increment: 0)
         moves.append(record)
-        
-        print("Move: \(record.move)")
-        print("Timestamp: \(record.timestamp)")
-    }
-    
-    func updateRemainingTime(with interval: DateInterval) {
-        remainingTime = timeControl.calculateRemainingTime(for: remainingTime, with: interval)
     }
     
     // This function will be called after the players turn.
