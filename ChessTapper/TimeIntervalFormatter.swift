@@ -18,8 +18,9 @@ public class TimeIntervalFormatter: DateComponentsFormatter {
         self.zeroFormattingBehavior = [.dropLeading, .pad]
         
         self.numberFormatter = NumberFormatter()
-        self.numberFormatter?.minimumFractionDigits = 0
-        self.numberFormatter?.maximumFractionDigits = 2
+        self.numberFormatter?.maximumIntegerDigits = 0
+        self.numberFormatter?.minimumFractionDigits = 2
+        self.numberFormatter?.maximumFractionDigits = 1
     }
     
     required init?(coder: NSCoder) {
@@ -27,12 +28,15 @@ public class TimeIntervalFormatter: DateComponentsFormatter {
     }
     
     public override func string(from ti: TimeInterval) -> String? {
+
+        if ti > 59 {
+            return super.string(from: ti.rounded(.up))
+        }
         
-        let seconds = ti / 60 / 60
-        let milliseconds = numberFormatter?.string(from: NSNumber(value: seconds))
+        guard let decimals = numberFormatter?.string(from: NSNumber(value: ti)) else { return .none }
+        guard let time = super.string(from: ti.rounded(.up)) else { return .none }
         
-        return super.string(from: ti.rounded(.up))
-//        return super.string(from: ti)! + Locale.current.decimalSeparator! + milliseconds!
+        return time + decimals
     }
     
 }
