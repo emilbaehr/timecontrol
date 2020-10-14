@@ -27,6 +27,7 @@ class ClockViewController: UIViewController {
     // Gesture recognisers:
     var stopTap: UITapGestureRecognizer!
     var pauseTap: UITapGestureRecognizer!
+    var settingsTap: UITapGestureRecognizer!
     var whiteClockTap: UITapGestureRecognizer!
     var blackClockTap: UITapGestureRecognizer!
         
@@ -99,6 +100,8 @@ class ClockViewController: UIViewController {
         settingsButton.overrideUserInterfaceStyle = .dark
         settingsButton.tintColor = .label
         settingsButton.translatesAutoresizingMaskIntoConstraints = false
+        settingsTap = UITapGestureRecognizer(target: self, action: #selector(settingsButton(_:)))
+        settingsButton.addGestureRecognizer(settingsTap)
 
         stopButton.setImage(UIImage(systemName: "stop.fill"), for: .normal)
         stopButton.setPreferredSymbolConfiguration(symbolConfig, forImageIn: .normal)
@@ -344,6 +347,11 @@ class ClockViewController: UIViewController {
             
             observeTimekeeper()
         }
+    }
+    
+    @objc func settingsButton(_ sender: UIButton) {
+        let settingsView = GameConfigurationViewController()
+        self.present(settingsView, animated: true, completion: nil)
     }
 
     fileprivate func observeTimekeeper() {

@@ -19,6 +19,7 @@
 		20D13C4024F7D5E8007ADB63 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20D13C3E24F7D5E8007ADB63 /* LaunchScreen.storyboard */; };
 		20D13C4824F7D8D8007ADB63 /* Timekeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D13C4724F7D8D8007ADB63 /* Timekeeper.swift */; };
 		20E07662252C4D72008A5E58 /* Bronstein.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E07661252C4D72008A5E58 /* Bronstein.swift */; };
+		20E42D8825374AC800EFDD20 /* GameConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E42D8725374AC800EFDD20 /* GameConfigurationViewController.swift */; };
 		20FB52F1253230B900C96E45 /* USDelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FB52F0253230B900C96E45 /* USDelay.swift */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +38,7 @@
 		20D13C4124F7D5E8007ADB63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		20D13C4724F7D8D8007ADB63 /* Timekeeper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timekeeper.swift; sourceTree = "<group>"; };
 		20E07661252C4D72008A5E58 /* Bronstein.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bronstein.swift; sourceTree = "<group>"; };
+		20E42D8725374AC800EFDD20 /* GameConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameConfigurationViewController.swift; sourceTree = "<group>"; };
 		20FB52F0253230B900C96E45 /* USDelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USDelay.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -72,6 +74,7 @@
 			children = (
 				20D13C3324F7D5E6007ADB63 /* AppDelegate.swift */,
 				20D13C3524F7D5E6007ADB63 /* SceneDelegate.swift */,
+				20E42D8725374AC800EFDD20 /* GameConfigurationViewController.swift */,
 				20D13C3724F7D5E6007ADB63 /* ClockViewController.swift */,
 				20D13C3C24F7D5E8007ADB63 /* Assets.xcassets */,
 				20D13C3E24F7D5E8007ADB63 /* LaunchScreen.storyboard */,
@@ -166,6 +169,7 @@
 				201372712520E45200AE61BF /* TimeControl.swift in Sources */,
 				2021D4F32532F2C500F191E8 /* Fischer.swift in Sources */,
 				20D13C4824F7D8D8007ADB63 /* Timekeeper.swift in Sources */,
+				20E42D8825374AC800EFDD20 /* GameConfigurationViewController.swift in Sources */,
 				207FEB5B2531B28B00704289 /* Player.swift in Sources */,
 				20D13C3624F7D5E6007ADB63 /* SceneDelegate.swift in Sources */,
 			);
