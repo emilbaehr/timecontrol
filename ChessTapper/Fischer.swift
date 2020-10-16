@@ -21,8 +21,8 @@ class Fischer: TimeControl {
         self.countdown = delay
     }
     
-    convenience init(of seconds: TimeInterval) {
-        self.init(of: seconds, delay: TimeInterval(0), increment: TimeInterval(0))
+    convenience init(of seconds: TimeInterval, increment: TimeInterval) {
+        self.init(of: seconds, delay: .zero, increment: increment)
     }
     
     func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {

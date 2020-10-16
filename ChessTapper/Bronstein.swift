@@ -22,8 +22,8 @@ class Bronstein: TimeControl {
         self.delay = delay
     }
     
-    convenience init(of seconds: TimeInterval) {
-        self.init(of: seconds, delay: TimeInterval(0), increment: TimeInterval(0))
+    convenience init(of seconds: TimeInterval, delay: TimeInterval) {
+        self.init(of: seconds, delay: delay, increment: .zero)
     }
     
     func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {

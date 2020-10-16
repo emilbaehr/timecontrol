@@ -8,10 +8,10 @@
 import UIKit
 import Combine
 
-class ClockViewController: UIViewController {
-
+class ClockViewController: UIViewController, GameConfigurationDelegate {
+    
     private var timeControl: TimeControl?
-    private var timeKeeper: Timekeeper?
+    private var timekeeper: Timekeeper?
     
     // UI components.
     let whiteClock = UIView()
@@ -48,7 +48,7 @@ class ClockViewController: UIViewController {
         timeControl = SuddenDeath(of: 65, delay: 0, increment: 0)
         
         if let timeControl = self.timeControl {
-            timeKeeper = Timekeeper(whitePlayer: timeControl, blackPlayer: timeControl)
+            timekeeper = Timekeeper(whitePlayer: timeControl, blackPlayer: timeControl)
         }
         
         whiteClock.backgroundColor = .white
@@ -65,12 +65,12 @@ class ClockViewController: UIViewController {
         blackClock.layer.cornerRadius = 24
         blackClock.layer.cornerCurve = .continuous
         
-        whiteClockLabel.text = timeKeeper?.whitePlayer.remainingTime.stringFromTimeInterval()
+        whiteClockLabel.text = timekeeper?.whitePlayer.remainingTime.stringFromTimeInterval()
         whiteClockLabel.textAlignment = .center
         whiteClockLabel.translatesAutoresizingMaskIntoConstraints = false
         whiteClockLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 72, weight: .light)
         
-        blackClockLabel.text = timeKeeper?.blackPlayer.remainingTime.stringFromTimeInterval()
+        blackClockLabel.text = timekeeper?.blackPlayer.remainingTime.stringFromTimeInterval()
         blackClockLabel.textAlignment = .center
         blackClockLabel.textColor = .white
         blackClockLabel.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
@@ -238,7 +238,7 @@ class ClockViewController: UIViewController {
                 blackClockTap.isEnabled = true
                 
             case .timesUp:
-                if timeKeeper?.playerInTurn == timeKeeper?.blackPlayer {
+                if timekeeper?.playerInTurn == timekeeper?.blackPlayer {
                     blackClockSecondaryLabel.text = "Time's up!"
                 } else {
                     whiteClockSecondaryLabel.text = "Time's up!"
@@ -255,7 +255,7 @@ class ClockViewController: UIViewController {
                 NSLayoutConstraint.deactivate(notStartedConstraints)
                 pauseButton.isEnabled = true
                 
-                if (timeKeeper?.playerInTurn == timeKeeper?.whitePlayer) {
+                if (timekeeper?.playerInTurn == timekeeper?.whitePlayer) {
                     NSLayoutConstraint.deactivate(blackTurnConstraints)
                     NSLayoutConstraint.activate(whiteTurnConstraints)
                     whiteClockSecondaryLabel.text = "Your Turn"
@@ -315,34 +315,35 @@ class ClockViewController: UIViewController {
     }
     
     @objc func switchTurn(_ sender: UITapGestureRecognizer) throws {
-        if timeKeeper?.state == .notStarted {
-            try timeKeeper?.start()
+        if timekeeper?.state == .notStarted {
+            try timekeeper?.start()
         } else {
-            try timeKeeper?.switchTurn()
+            try timekeeper?.switchTurn()
         }
     }
     
     @objc func pauseButton(_ sender: UIButton) throws {
-        if timeKeeper?.state == .paused {
-            try timeKeeper?.start()
+        if timekeeper?.state == .paused {
+            try timekeeper?.start()
         } else {
-            timeKeeper?.pause()
+            timekeeper?.pause()
         }
     }
     
     @objc func stopButton(_ sender: UIButton) {
 
-        if timeKeeper?.state == .paused || timeKeeper?.state == .stopped {
-            timeKeeper?.stop()
+        if timekeeper?.state == .paused || timekeeper?.state == .stopped {
+            timekeeper?.stop()
 
-            // Do some data clearing. Not sure if this should be build into the Timekeeper, though.
-            if let whiteBooked = timeKeeper?.whitePlayer.timeControl.bookedTime, let blackBooked = timeKeeper?.whitePlayer.timeControl.bookedTime {
-                timeKeeper?.whitePlayer.remainingTime = whiteBooked
-                timeKeeper?.blackPlayer.remainingTime = blackBooked
+            // Do some data clearing. Not sure if this should be build into the timekeeper, though.
+            if let whiteBooked = timekeeper?.whitePlayer.timeControl.bookedTime, let blackBooked = timekeeper?.whitePlayer.timeControl.bookedTime {
+                timekeeper?.whitePlayer.remainingTime = whiteBooked
+                timekeeper?.blackPlayer.remainingTime = blackBooked
             }
 
-            if let currentTimeControl = self.timeControl {
-                timeKeeper = Timekeeper(whitePlayer: currentTimeControl, blackPlayer: currentTimeControl)
+            if let whiteTimeControl = timekeeper?.whitePlayer.timeControl,
+               let blackTimeControl = timekeeper?.blackPlayer.timeControl {
+                timekeeper = Timekeeper(whitePlayer: whiteTimeControl, blackPlayer: blackTimeControl)
             }
             
             observeTimekeeper()
@@ -351,24 +352,27 @@ class ClockViewController: UIViewController {
     
     @objc func settingsButton(_ sender: UIButton) {
         let settingsView = GameConfigurationViewController()
+        settingsView.delegate = self
         self.present(settingsView, animated: true, completion: nil)
     }
 
     fileprivate func observeTimekeeper() {
-        cancellable = timeKeeper?.$state.sink { [weak self] state in
+        cancellable = timekeeper?.$state.sink { [weak self] state in
             self?.render(state)
         }
         
+        observers = []
+        
         observers = [
-            timeKeeper!.observe(\.whitePlayer.remainingTime, options: .new) { (tk, change) in
+            timekeeper!.observe(\.whitePlayer.remainingTime, options: .new) { (tk, change) in
                 self.whiteClockLabel.text = tk.whitePlayer.remainingTime.stringFromTimeInterval()
             },
-            timeKeeper!.observe(\.blackPlayer.remainingTime, options: .new) { (tk, change) in
+            timekeeper!.observe(\.blackPlayer.remainingTime, options: .new) { (tk, change) in
                 self.blackClockLabel.text = tk.blackPlayer.remainingTime.stringFromTimeInterval()
             },
-            timeKeeper!.observe(\.playerInTurn, options: .new) { (tk, change) in
+            timekeeper!.observe(\.playerInTurn, options: .new) { (tk, change) in
                 print(change)
-                self.render((self.timeKeeper?.state)!)
+                self.render((self.timekeeper?.state)!)
             }
         ]
     }
@@ -384,7 +388,26 @@ class ClockViewController: UIViewController {
 
 }
 
-// MARK: - Extension for using SF Pro Rounded.
+// MARK: - Conform to the GameConfigurationDelegate
+extension ClockViewController {
+    
+    func finishedConfiguringTimekeeper(_ timekeeper: Timekeeper) {
+        print("I am configuring the timekeeper now...")
+        
+        self.timekeeper?.stop()
+        self.timekeeper = timekeeper
+        
+        whiteClockLabel.text = self.timekeeper?.whitePlayer.remainingTime.stringFromTimeInterval()
+        blackClockLabel.text = self.timekeeper?.blackPlayer.remainingTime.stringFromTimeInterval()
+
+        observeTimekeeper()
+        
+        render(timekeeper.state)
+    }
+    
+}
+
+// MARK: - Extension for using SF Pro Rounded
 extension UIFont {
     
     class func rounded(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {
@@ -400,5 +423,13 @@ extension UIFont {
         
         return font
     }
+    
+}
+
+// MARK: - Extension for Settings
+
+protocol GameConfigurationDelegate: AnyObject {
+    
+    func finishedConfiguringTimekeeper(_ timekeeper: Timekeeper)
     
 }

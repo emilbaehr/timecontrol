@@ -20,7 +20,7 @@ class USDelay: TimeControl {
     }
     
     convenience init(of seconds: TimeInterval, delay: TimeInterval) {
-        self.init(of: seconds, delay: delay, increment: TimeInterval(0))
+        self.init(of: seconds, delay: delay, increment: .zero)
     }
     
     func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {        

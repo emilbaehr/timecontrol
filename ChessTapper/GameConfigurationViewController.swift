@@ -10,13 +10,16 @@ import UIKit
 
 class GameConfigurationViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var tableView = UITableView(frame: .zero, style: .grouped)
+    weak var delegate: GameConfigurationDelegate?
+    var tableView = UITableView(frame: .zero, style: .insetGrouped)
     
-    let gameModes = [
-        "5|3"   : 10,
-        "10|3"  : 10,
-        "5|0"  : 10,
-        "10|0"  : 10
+    let timeControls: Array<TimeControl> = [
+        SuddenDeath(of: 300),
+        SuddenDeath(of: 600),
+        Bronstein(of: 300, delay: 5),
+        Bronstein(of: 600, delay: 3),
+        Fischer(of: 300, increment: 5),
+        Fischer(of: 600, increment: 3)
     ]
     
     override func loadView() {
@@ -31,18 +34,25 @@ class GameConfigurationViewController: UIViewController, UITableViewDelegate, UI
         tableView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return gameModes.count
+        return timeControls.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        let gameModesList = Array(gameModes.keys)
-        cell.textLabel?.text = String("\(gameModesList[indexPath.row]) \(gameModes[gameModesList[indexPath.row]])")
+        cell.textLabel?.text = String("TimeControl \(indexPath.row)")
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let timeControl = timeControls[indexPath.row]
+        let timekeeper = Timekeeper(whitePlayer: timeControl, blackPlayer: timeControl)
+        print("Selected row \(indexPath.row).")
+        delegate?.finishedConfiguringTimekeeper(timekeeper)
     }
     
 }
