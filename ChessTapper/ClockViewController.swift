@@ -10,7 +10,6 @@ import Combine
 
 class ClockViewController: UIViewController, GameConfigurationDelegate {
     
-    private var timeControl: TimeControl?
     private var timekeeper: Timekeeper?
     
     // UI components.
@@ -45,11 +44,8 @@ class ClockViewController: UIViewController, GameConfigurationDelegate {
         let rootView = UIView()
         rootView.backgroundColor = .black
         
-        timeControl = SuddenDeath(of: 65, delay: 0, increment: 0)
-        
-        if let timeControl = self.timeControl {
-            timekeeper = Timekeeper(whitePlayer: timeControl, blackPlayer: timeControl)
-        }
+        let timeControl = SuddenDeath(of: 300, delay: 0, increment: 0)
+        timekeeper = Timekeeper(whitePlayer: timeControl, blackPlayer: timeControl)
         
         whiteClock.backgroundColor = .white
         blackClock.backgroundColor = .secondarySystemGroupedBackground
@@ -392,7 +388,6 @@ class ClockViewController: UIViewController, GameConfigurationDelegate {
 extension ClockViewController {
     
     func finishedConfiguringTimekeeper(_ timekeeper: Timekeeper) {
-        print("I am configuring the timekeeper now...")
         
         self.timekeeper?.stop()
         self.timekeeper = timekeeper

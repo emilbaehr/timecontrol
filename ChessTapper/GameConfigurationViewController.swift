@@ -56,13 +56,21 @@ class GameConfigurationViewController: UIViewController, UITableViewDelegate, UI
         self.view.bringSubviewToFront(navBar)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        let indexPath = IndexPath(row: 0, section: 0)
+        tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return timeControls.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        
         cell.textLabel?.text = String("TimeControl \(indexPath.row)")
+        cell.selectionStyle = .none
+        
         return cell
     }
     
@@ -77,8 +85,20 @@ class GameConfigurationViewController: UIViewController, UITableViewDelegate, UI
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        if let cell = tableView.cellForRow(at: indexPath) {
+            cell.accessoryType = .checkmark
+        }
+        
         selectedTimeControl = timeControls[indexPath.row]
         print("Selected row \(indexPath.row).")
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        
+        if let cell = tableView.cellForRow(at: indexPath) {
+            cell.accessoryType = .none
+        }
     }
     
 }
