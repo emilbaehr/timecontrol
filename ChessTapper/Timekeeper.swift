@@ -46,6 +46,7 @@ import Foundation
         guard player == nil || player != playerInTurn || state == .paused else { return }
         guard player == nil || player == whitePlayer || player == blackPlayer else { throw Error.unknownPlayer }
         
+        
         // Clear timer, since it might be running on the previous player.
         self.timer?.invalidate()
         self.timer = nil
@@ -55,6 +56,10 @@ import Foundation
         
         // The active player becomes the next player.
         playerInTurn = nextPlayer
+        
+        if state == .notStarted {
+            nextPlayer.incrementBefore()
+        }
         
         start = Date()
         
@@ -113,8 +118,12 @@ import Foundation
         guard let nextPlayer = playerOutOfTurn else { return }
         
         previousPlayer.moves += 1
+        
         previousPlayer.incrementAfter()
-        nextPlayer.incrementBefore()
+        
+        if state != .notStarted {
+            nextPlayer.incrementBefore()
+        }
         
         print("\(previousPlayer.name ?? "Previous player") move: \(previousPlayer.moves)")
         print("\(nextPlayer.name ?? "Next player") move: \(nextPlayer.moves)")
