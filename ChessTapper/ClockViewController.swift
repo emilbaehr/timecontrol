@@ -12,6 +12,8 @@ class ClockViewController: UIViewController, GameConfigurationDelegate {
     
     private var timekeeper: Timekeeper?
     
+    let settingsView = GameConfigurationViewController()
+    
     // UI components.
     let whiteClock = UIView()
     let blackClock = UIView()
@@ -347,7 +349,6 @@ class ClockViewController: UIViewController, GameConfigurationDelegate {
     }
     
     @objc func settingsButton(_ sender: UIButton) {
-        let settingsView = GameConfigurationViewController()
         settingsView.delegate = self
         self.present(settingsView, animated: true, completion: nil)
     }

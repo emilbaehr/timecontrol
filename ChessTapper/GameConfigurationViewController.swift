@@ -15,14 +15,20 @@ class GameConfigurationViewController: UIViewController, UITableViewDelegate, UI
     var navBar = UINavigationBar(frame: .zero)
     
     var selectedTimeControl: TimeControl?
+    var currentIndex: IndexPath?
     
-    let timeControls: Array<TimeControl> = [
-        SuddenDeath(of: 300),
-        SuddenDeath(of: 600),
-        Bronstein(of: 300, delay: 5),
-        Bronstein(of: 600, delay: 3),
-        Fischer(of: 300, increment: 5),
-        Fischer(of: 600, increment: 3)
+    struct TimeControlPresentation {
+        var name: String
+        var timeControl: TimeControl
+    }
+    
+    let timeControls: [Int : TimeControlPresentation] = [
+        0 : TimeControlPresentation(name: "5 min", timeControl: SuddenDeath(of: 300)),
+        1 : TimeControlPresentation(name: "10 min", timeControl: SuddenDeath(of: 300)),
+        2 : TimeControlPresentation(name: "Fischer 5 | 5", timeControl: Fischer(of: 300, increment: 5)),
+        3 : TimeControlPresentation(name: "Fischer 10 | 3", timeControl: Fischer(of: 600, increment: 3)),
+        4 : TimeControlPresentation(name: "Bronstein 5 | 5", timeControl: Bronstein(of: 300, delay: 5)),
+        5 : TimeControlPresentation(name: "Bronstein 10 | 3", timeControl: Bronstein(of: 600, delay: 3))
     ]
     
     override func loadView() {
@@ -58,7 +64,7 @@ class GameConfigurationViewController: UIViewController, UITableViewDelegate, UI
     
     override func viewWillAppear(_ animated: Bool) {
         let indexPath = IndexPath(row: 0, section: 0)
-        tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+        tableView.selectRow(at: currentIndex, animated: false, scrollPosition: .none)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -67,8 +73,9 @@ class GameConfigurationViewController: UIViewController, UITableViewDelegate, UI
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        
-        cell.textLabel?.text = String("TimeControl \(indexPath.row)")
+                
+        let timeControl = timeControls[indexPath.row]
+        cell.textLabel?.text = (timeControl?.name)
         cell.selectionStyle = .none
         
         return cell
@@ -86,11 +93,14 @@ class GameConfigurationViewController: UIViewController, UITableViewDelegate, UI
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        // Persist it.
+        currentIndex = indexPath
+        
         if let cell = tableView.cellForRow(at: indexPath) {
             cell.accessoryType = .checkmark
         }
         
-        selectedTimeControl = timeControls[indexPath.row]
+        selectedTimeControl = timeControls[indexPath.row]?.timeControl
         print("Selected row \(indexPath.row).")
     }
     
