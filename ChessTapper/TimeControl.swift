@@ -18,11 +18,10 @@ protocol TimeControl {
     func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval
     
     func incrementAfter() -> TimeInterval
-
-    func incrementBefore() -> TimeInterval
     
 }
 
+// Default implementation, such that it doesn't have to be explicitly written for each conforming class.
 //extension TimeControl {
 //
 //    func incrementBefore() -> TimeInterval {

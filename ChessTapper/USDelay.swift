@@ -31,8 +31,4 @@ class USDelay: TimeControl {
         return .zero
     }
     
-    func incrementBefore() -> TimeInterval {
-        return .zero
-    }
-    
 }

@@ -38,11 +38,6 @@ import Foundation
         remainingTime += timeControl.incrementAfter()
     }
     
-    // This function will be called at the beginning of the players turn.
-    func incrementBefore() {
-        remainingTime += timeControl.incrementBefore()
-    }
-    
     public static func ==(lhs: Player, rhs: Player) -> Bool {
         lhs === rhs
     }

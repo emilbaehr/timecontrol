@@ -57,22 +57,23 @@ import Foundation
         // The active player becomes the next player.
         playerInTurn = nextPlayer
         
-        if state == .notStarted {
-            nextPlayer.incrementBefore()
-        }
-        
         start = Date()
         
         // The remaining time for the next player at the start of the timing. Used in calculating remaining time - ongoing duration.
         let remainingTime = nextPlayer.remainingTime
                 
+        var delay = nextPlayer.timeControl.delay
         timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { timer in
             
             let now = Date()
             
-            if let start = self.start {                                
-                let interval = DateInterval(start: start, end: now)
-                nextPlayer.remainingTime = max(nextPlayer.timeControl.calculateRemainingTime(for: remainingTime, with: interval.duration), 0)
+            delay = max(nextPlayer.timeControl.delay - DateInterval(start: self.start!, end: now).duration, 0)
+            
+            if delay == 0 {
+                if let start = self.start {
+                    let interval = DateInterval(start: start, end: now)
+                    nextPlayer.remainingTime = max(nextPlayer.timeControl.calculateRemainingTime(for: remainingTime, with: interval.duration), 0) + nextPlayer.timeControl.delay
+                }
             }
 
             // Notify when the time is up.
@@ -118,12 +119,7 @@ import Foundation
         guard let nextPlayer = playerOutOfTurn else { return }
         
         previousPlayer.moves += 1
-        
         previousPlayer.incrementAfter()
-        
-        if state != .notStarted {
-            nextPlayer.incrementBefore()
-        }
         
         print("\(previousPlayer.name ?? "Previous player") move: \(previousPlayer.moves)")
         print("\(nextPlayer.name ?? "Next player") move: \(nextPlayer.moves)")

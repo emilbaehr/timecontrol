@@ -36,8 +36,4 @@ class Bronstein: TimeControl {
         return unusedTime
     }
     
-    func incrementBefore() -> TimeInterval {
-        return .zero
-    }
-    
 }
