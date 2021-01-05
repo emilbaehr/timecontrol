@@ -41,45 +41,39 @@ import Foundation
         self.state = .notStarted
     }
     
-    public func start(_ player: Player? = nil) throws {
+    public func start(_ player: Player) throws {
         
         // If Timekeeper was stopped, do not allow restart.
         guard state != .stopped || state != .timesUp else { throw Error.restartNotAllowed }
         
-        // If we're starting the player who's already running, just return.
-        guard player == nil || player != playerInTurn || state == .paused else { return }
-        guard player == nil || player == whitePlayer || player == blackPlayer else { throw Error.unknownPlayer }
-        
+
         // Clear timer, since it might be running on the previous player.
         self.timer?.invalidate()
         self.timer = nil
         
-        // Let the next player be the player specified in the call to start. Else, start the player in turn, or start white player.
-        let nextPlayer = player ?? playerInTurn ?? whitePlayer
-        
         // The active player becomes the next player.
-        playerInTurn = nextPlayer
+        playerInTurn = player
         
         // Start time for current move (or resumed move).
         start = Date()
         
         // Used by timer loop to update remaining time.
-        let remainingTime = nextPlayer.remainingTime
+        let remainingTime = player.remainingTime
         
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
 
             let now = Date()
             guard let start = self.start else { return }
             
-            self.delay = max(nextPlayer.timeControl.delay - DateInterval(start: start, end: now).duration, 0)
+            self.delay = max(player.timeControl.delay - DateInterval(start: start, end: now).duration, 0)
             
             if self.delay == 0 {
                 let interval = DateInterval(start: start, end: now)
-                nextPlayer.remainingTime = max(nextPlayer.timeControl.calculateRemainingTime(for: remainingTime, with: interval.duration - nextPlayer.timeControl.delay), 0)
+                player.remainingTime = max(player.timeControl.calculateRemainingTime(for: remainingTime, with: interval.duration - player.timeControl.delay), 0)
             }
 
             // Notify when the time is up.
-            if nextPlayer.remainingTime == 0 {
+            if player.remainingTime == 0 {
                 self.timer?.invalidate()
                 self.timer = nil
                 self.state = .timesUp
