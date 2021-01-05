@@ -50,7 +50,6 @@ import Foundation
         guard player == nil || player != playerInTurn || state == .paused else { return }
         guard player == nil || player == whitePlayer || player == blackPlayer else { throw Error.unknownPlayer }
         
-        
         // Clear timer, since it might be running on the previous player.
         self.timer?.invalidate()
         self.timer = nil
@@ -61,25 +60,16 @@ import Foundation
         // The active player becomes the next player.
         playerInTurn = nextPlayer
         
+        // Start time for current move (or resumed move).
         start = Date()
         
-        guard let start = self.start else { throw Error.noStartTime }
-        
+        // Used by timer loop to update remaining time.
         let remainingTime = nextPlayer.remainingTime
-        
-        // Re(set) the delay.
-        if state != .paused {
-            delay = nextPlayer.timeControl.delay
-        }
-        
-        if self.state == .paused, let paused = self.paused {
-            print("Timeout was: \(DateInterval(start: paused, end: start).duration)")
-//            timeout = DateInterval(start: paused, end: start).duration
-        }
         
         self.timer = Timer.init(fire: Date(), interval: 0.1, repeats: true) { timer in
 
             let now = Date()
+            guard let start = self.start else { return }
             
             self.delay = max(nextPlayer.timeControl.delay - DateInterval(start: start, end: now).duration, 0)
             
@@ -95,8 +85,6 @@ import Foundation
                 self.state = .timesUp
             }
             
-//            print("White: \(self.whitePlayer.remainingTime.stringFromTimeInterval())")
-//            print("Black: \(self.blackPlayer.remainingTime.stringFromTimeInterval())")
         }
         
         if let timer = self.timer {
@@ -108,12 +96,13 @@ import Foundation
     
     public func pause() {
         guard state == .running else { return }
+        guard let player = playerInTurn else { return }
         
-        // It makes no sense to record time when pausing. It's a bit like mixing pears and apples.
-        // The records are for the actual moves.
-    
-        // Used to handle pausing for US Delay type time controls.
-        paused = Date()
+        // Get the ongoing time.
+        guard let start = self.start else { return }
+        let interval = DateInterval(start: start, end: Date())
+        
+        recordTime(for: player, duration: interval.duration, increment: 0)
         
         // Just set the timer to nil.
         timer?.invalidate()
@@ -123,14 +112,12 @@ import Foundation
     }
     
     public func stop() {
-        
         guard self.state != .stopped else { return }
         guard let player = playerInTurn else { return }
         
         // Get the ongoing time.
         guard let start = self.start else { return }
-        let now = Date()
-        let interval = DateInterval(start: start, end: now)
+        let interval = DateInterval(start: start, end: Date())
         
         let increment = player.timeControl.calculateIncrement(for: interval.duration)
         recordTime(for: player, duration: interval.duration, increment: increment)
@@ -149,16 +136,20 @@ import Foundation
         
         // Get the ongoing time.
         guard let start = self.start else { return }
-        let now = Date()
-        let interval = DateInterval(start: start, end: now)
+        let interval = DateInterval(start: start, end: Date())
         
         let increment = previousPlayer.timeControl.calculateIncrement(for: interval.duration)
         recordTime(for: previousPlayer, duration: interval.duration, increment: increment)
+        
+        // Only when switching turn.
         previousPlayer.remainingTime += increment
         previousPlayer.moves += 1
+        
+        // Re(set)
+        delay = nextPlayer.timeControl.delay
                 
-        print("\(previousPlayer.name ?? "Previous player") move: \(previousPlayer.moves) time: \(previousPlayer.remainingTime)")
-        print("\(nextPlayer.name ?? "Next player") move: \(nextPlayer.moves) time: \(nextPlayer.remainingTime)")
+        print("\(whitePlayer.name ?? "White") move: \(previousPlayer.moves), time: \(previousPlayer.remainingTime)")
+        print("\(blackPlayer.name ?? "Black") move: \(nextPlayer.moves), time: \(nextPlayer.remainingTime)")
         
         try self.start(nextPlayer)
     }
