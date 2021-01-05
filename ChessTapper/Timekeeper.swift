@@ -41,7 +41,7 @@ import Foundation
         self.state = .notStarted
     }
     
-    public func start(_ player: Player) throws {
+    public func start(_ player: Player? = nil) throws {
         
         // If Timekeeper was stopped, do not allow restart.
         guard state != .stopped || state != .timesUp else { throw Error.restartNotAllowed }
@@ -51,29 +51,32 @@ import Foundation
         self.timer?.invalidate()
         self.timer = nil
         
+        // Let the next player be the player specified in the call to start. Else, start the player in turn, or start white player.
+        let nextPlayer = player ?? playerInTurn ?? whitePlayer
+        
         // The active player becomes the next player.
-        playerInTurn = player
+        playerInTurn = nextPlayer
         
         // Start time for current move (or resumed move).
         start = Date()
         
         // Used by timer loop to update remaining time.
-        let remainingTime = player.remainingTime
+        let remainingTime = nextPlayer.remainingTime
         
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
 
             let now = Date()
             guard let start = self.start else { return }
             
-            self.delay = max(player.timeControl.delay - DateInterval(start: start, end: now).duration, 0)
+            self.delay = max(nextPlayer.timeControl.delay - DateInterval(start: start, end: now).duration, 0)
             
             if self.delay == 0 {
                 let interval = DateInterval(start: start, end: now)
-                player.remainingTime = max(player.timeControl.calculateRemainingTime(for: remainingTime, with: interval.duration - player.timeControl.delay), 0)
+                nextPlayer.remainingTime = max(nextPlayer.timeControl.calculateRemainingTime(for: remainingTime, with: interval.duration - nextPlayer.timeControl.delay), 0)
             }
 
             // Notify when the time is up.
-            if player.remainingTime == 0 {
+            if nextPlayer.remainingTime == 0 {
                 self.timer?.invalidate()
                 self.timer = nil
                 self.state = .timesUp
