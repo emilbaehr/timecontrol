@@ -29,12 +29,12 @@ public class TimeIntervalFormatter: DateComponentsFormatter {
     
     public override func string(from ti: TimeInterval) -> String? {
 
-        if ti > 59 {
+        if ti > 60 {
             return super.string(from: ti.rounded())
         }
         
         guard let decimals = numberFormatter?.string(from: NSNumber(value: ti)) else { return .none }
-        guard let time = super.string(from: ti.rounded()) else { return .none }
+        guard let time = super.string(from: ti.rounded(.down)) else { return .none }
         
         return time + decimals
     }

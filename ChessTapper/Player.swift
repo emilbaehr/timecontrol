@@ -16,13 +16,14 @@ import Foundation
     var timeControl: TimeControl
     
     var moves: Int
-    var records = [Record]()
+    var records = [Record]()            // A time sheet.
     
     // A time sheet record for a move.
     public struct Record {
-        let timestamp: Date // Start of the record.
-        let duration: TimeInterval // Time spent on the move.
-        let increment: TimeInterval // The increment added after the move.
+        let move: Int                   // The move the time was recorded for.
+        let timestamp: Date             // When the player tapped the clock. Or the game was stopped.
+        let duration: TimeInterval      // Time spent on the move, without increment.
+        let increment: TimeInterval     // The increment added after the move.
     }
     
     init(timeControl: TimeControl, name: String? = nil) {
@@ -33,9 +34,10 @@ import Foundation
         self.records = []
     }
     
-    // This function will be called after the players turn.
-    func incrementAfter() {
-        remainingTime += timeControl.incrementAfter()
+    // +1 moves so no moves are called "Move 0".
+    func record(timestamp: Date, duration: TimeInterval, increment: TimeInterval) {
+        let record = Record(move: moves + 1, timestamp: timestamp, duration: duration, increment: increment)
+        records.append(record)
     }
     
     public static func ==(lhs: Player, rhs: Player) -> Bool {

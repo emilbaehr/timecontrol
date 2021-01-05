@@ -10,7 +10,11 @@ import Foundation
 @objc class Timekeeper: NSObject, ObservableObject {
 
     private var timer: Timer?
-    private var start: Date? // Start time of current timing.
+    
+    private var start: Date?             // Start time of current timing.
+    private var paused: Date?             // Start time of current timing.
+    
+    private var delay: TimeInterval?     // Time to delay. Could be observed by the UI to display the delay.
     
     @objc dynamic var whitePlayer: Player
     @objc dynamic var blackPlayer: Player
@@ -40,7 +44,7 @@ import Foundation
     public func start(_ player: Player? = nil) throws {
         
         // If Timekeeper was stopped, do not allow restart.
-        guard state != .stopped else { throw Error.restartNotAllowed }
+        guard state != .stopped || state != .timesUp else { throw Error.restartNotAllowed }
         
         // If we're starting the player who's already running, just return.
         guard player == nil || player != playerInTurn || state == .paused else { return }
@@ -59,21 +63,29 @@ import Foundation
         
         start = Date()
         
-        // The remaining time for the next player at the start of the timing. Used in calculating remaining time - ongoing duration.
+        guard let start = self.start else { throw Error.noStartTime }
+        
         let remainingTime = nextPlayer.remainingTime
-                
-        var delay = nextPlayer.timeControl.delay
-        timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { timer in
-            
+        
+        // Re(set) the delay.
+        if state != .paused {
+            delay = nextPlayer.timeControl.delay
+        }
+        
+        if self.state == .paused, let paused = self.paused {
+            print("Timeout was: \(DateInterval(start: paused, end: start).duration)")
+//            timeout = DateInterval(start: paused, end: start).duration
+        }
+        
+        self.timer = Timer.init(fire: Date(), interval: 0.1, repeats: true) { timer in
+
             let now = Date()
             
-            delay = max(nextPlayer.timeControl.delay - DateInterval(start: self.start!, end: now).duration, 0)
+            self.delay = max(nextPlayer.timeControl.delay - DateInterval(start: start, end: now).duration, 0)
             
-            if delay == 0 {
-                if let start = self.start {
-                    let interval = DateInterval(start: start, end: now)
-                    nextPlayer.remainingTime = max(nextPlayer.timeControl.calculateRemainingTime(for: remainingTime, with: interval.duration), 0) + nextPlayer.timeControl.delay
-                }
+            if self.delay == 0 {
+                let interval = DateInterval(start: start, end: now)
+                nextPlayer.remainingTime = max(nextPlayer.timeControl.calculateRemainingTime(for: remainingTime, with: interval.duration - nextPlayer.timeControl.delay), 0)
             }
 
             // Notify when the time is up.
@@ -82,9 +94,13 @@ import Foundation
                 self.timer = nil
                 self.state = .timesUp
             }
-    
-//            print("White: " + self.whitePlayer.remainingTime.stringFromTimeInterval())
-//            print("Black: " + self.blackPlayer.remainingTime.stringFromTimeInterval())
+            
+//            print("White: \(self.whitePlayer.remainingTime.stringFromTimeInterval())")
+//            print("Black: \(self.blackPlayer.remainingTime.stringFromTimeInterval())")
+        }
+        
+        if let timer = self.timer {
+            RunLoop.main.add(timer, forMode: .common)
         }
         
         self.state = .running
@@ -92,8 +108,13 @@ import Foundation
     
     public func pause() {
         guard state == .running else { return }
-        guard let player = playerInTurn, let start = self.start else { return }
-                
+        
+        // It makes no sense to record time when pausing. It's a bit like mixing pears and apples.
+        // The records are for the actual moves.
+    
+        // Used to handle pausing for US Delay type time controls.
+        paused = Date()
+        
         // Just set the timer to nil.
         timer?.invalidate()
         timer = nil
@@ -104,7 +125,15 @@ import Foundation
     public func stop() {
         
         guard self.state != .stopped else { return }
-        guard let player = playerInTurn, let start = self.start else { return }
+        guard let player = playerInTurn else { return }
+        
+        // Get the ongoing time.
+        guard let start = self.start else { return }
+        let now = Date()
+        let interval = DateInterval(start: start, end: now)
+        
+        let increment = player.timeControl.calculateIncrement(for: interval.duration)
+        recordTime(for: player, duration: interval.duration, increment: increment)
         
         // Stop everything. Can't be restarted.
         timer?.invalidate()
@@ -118,13 +147,20 @@ import Foundation
         guard let previousPlayer = playerInTurn else { return }
         guard let nextPlayer = playerOutOfTurn else { return }
         
+        // Get the ongoing time.
+        guard let start = self.start else { return }
+        let now = Date()
+        let interval = DateInterval(start: start, end: now)
+        
+        let increment = previousPlayer.timeControl.calculateIncrement(for: interval.duration)
+        recordTime(for: previousPlayer, duration: interval.duration, increment: increment)
+        previousPlayer.remainingTime += increment
         previousPlayer.moves += 1
-        previousPlayer.incrementAfter()
+                
+        print("\(previousPlayer.name ?? "Previous player") move: \(previousPlayer.moves) time: \(previousPlayer.remainingTime)")
+        print("\(nextPlayer.name ?? "Next player") move: \(nextPlayer.moves) time: \(nextPlayer.remainingTime)")
         
-        print("\(previousPlayer.name ?? "Previous player") move: \(previousPlayer.moves)")
-        print("\(nextPlayer.name ?? "Next player") move: \(nextPlayer.moves)")
-        
-        try start(nextPlayer)
+        try self.start(nextPlayer)
     }
     
 }
@@ -132,7 +168,12 @@ import Foundation
 // MARK: - Helpers
 
 extension Timekeeper {
-        
+    
+    func recordTime(for player: Player, duration: TimeInterval, increment: TimeInterval) {
+        let now = Date()
+        player.record(timestamp: now, duration: duration, increment: increment)
+    }
+    
 }
 
 // MARK: - Errors
@@ -142,6 +183,7 @@ extension Timekeeper {
     public enum Error: Swift.Error {
         case unknownPlayer
         case restartNotAllowed
+        case noStartTime
     }
 }
 

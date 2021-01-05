@@ -27,10 +27,10 @@ class GameConfigurationViewController: UIViewController, UITableViewDelegate, UI
         1 : TimeControlPresentation(name: "10 min", timeControl: SuddenDeath(of: 300)),
         2 : TimeControlPresentation(name: "Fischer 5 | 5", timeControl: Fischer(of: 300, increment: 5)),
         3 : TimeControlPresentation(name: "Fischer 10 | 3", timeControl: Fischer(of: 600, increment: 3)),
-        4 : TimeControlPresentation(name: "Bronstein 5 | 5", timeControl: Bronstein(of: 300, delay: 5)),
-        5 : TimeControlPresentation(name: "Bronstein 10 | 3", timeControl: Bronstein(of: 600, delay: 3)),
+        4 : TimeControlPresentation(name: "Bronstein 5 | 5", timeControl: Bronstein(of: 300, increment: 5)),
+        5 : TimeControlPresentation(name: "Bronstein 10 | 3", timeControl: Bronstein(of: 600, increment: 3)),
         6 : TimeControlPresentation(name: "US Delay 5 | 5", timeControl: USDelay(of: 300, delay: 5)),
-        7 : TimeControlPresentation(name: "US Delay 10 | 3", timeControl: USDelay(of: 600, delay: 3))
+        7 : TimeControlPresentation(name: "US Delay 10 | 3", timeControl: USDelay(of: 63, delay: 3))
     ]
     
     override func loadView() {
@@ -65,7 +65,6 @@ class GameConfigurationViewController: UIViewController, UITableViewDelegate, UI
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        let indexPath = IndexPath(row: 0, section: 0)
         tableView.selectRow(at: currentIndex, animated: false, scrollPosition: .none)
     }
     

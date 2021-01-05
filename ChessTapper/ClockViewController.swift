@@ -222,7 +222,6 @@ class ClockViewController: UIViewController, GameConfigurationDelegate {
             case .notStarted, .stopped:
                 NSLayoutConstraint.activate(notStartedConstraints)
                 
-                print("Not Started.")
                 blackClockSecondaryLabel.text = "Tap to Start"
                 whiteClockSecondaryLabel.text = "Waiting for Black"
                 
@@ -249,7 +248,7 @@ class ClockViewController: UIViewController, GameConfigurationDelegate {
                 pauseButton.isEnabled = false
                 
             case .running:
-                print("Running.")
+//                print("Running.")
                 NSLayoutConstraint.deactivate(notStartedConstraints)
                 pauseButton.isEnabled = true
                 
@@ -276,7 +275,7 @@ class ClockViewController: UIViewController, GameConfigurationDelegate {
                 pauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
                 
             case .paused:
-                print("Paused.")
+//                print("Paused.")
                 
                 NSLayoutConstraint.deactivate(whiteTurnConstraints)
                 NSLayoutConstraint.deactivate(blackTurnConstraints)
@@ -368,7 +367,7 @@ class ClockViewController: UIViewController, GameConfigurationDelegate {
                 self.blackClockLabel.text = tk.blackPlayer.remainingTime.stringFromTimeInterval()
             },
             timekeeper!.observe(\.playerInTurn, options: .new) { (tk, change) in
-                print(change)
+//                print(change)
                 self.render((self.timekeeper?.state)!)
             }
         ]

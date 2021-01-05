@@ -1,5 +1,5 @@
 //
-//  TimeControl.swift
+//  SuddenDeath.swift
 //  ChessTapper
 //
 //  Created by Emil Malthe Bæhr Christensen on 27/09/2020.
@@ -27,7 +27,7 @@ class SuddenDeath: TimeControl {
         return remainingTime - ongoing
     }
     
-    func incrementAfter() -> TimeInterval {
+    func calculateIncrement(for ongoing: TimeInterval) -> TimeInterval {
         return .zero
     }
     

@@ -1,5 +1,5 @@
 //
-//  TimeControl.swift
+//  USDelay.swift
 //  ChessTapper
 //
 //  Created by Emil Malthe Bæhr Christensen on 27/09/2020.
@@ -23,11 +23,14 @@ class USDelay: TimeControl {
         self.init(of: seconds, delay: delay, increment: .zero)
     }
     
-    func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {        
+    func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {
+        // Keep adding the ongoing time, as long as it's less than the Bronstein delay.
+        // When the ongoing time gets larger than the Bronstein delay, the time will begin changing.
+//        return remainingTime - ongoing + min(ongoing, delay)
         return remainingTime - ongoing
     }
     
-    func incrementAfter() -> TimeInterval {
+    func calculateIncrement(for ongoing: TimeInterval) -> TimeInterval {
         return .zero
     }
     

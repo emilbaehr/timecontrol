@@ -12,13 +12,11 @@ class Fischer: TimeControl {
     var bookedTime: TimeInterval
     var increment: TimeInterval
     var delay: TimeInterval
-    var countdown: TimeInterval
     
     required init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval) {
         self.bookedTime = seconds
         self.increment = increment
         self.delay = delay
-        self.countdown = delay
     }
     
     convenience init(of seconds: TimeInterval, increment: TimeInterval) {
@@ -29,7 +27,7 @@ class Fischer: TimeControl {
         return remainingTime - ongoing
     }
     
-    func incrementAfter() -> TimeInterval {
+    func calculateIncrement(for ongoing: TimeInterval) -> TimeInterval {
         return increment
     }
 
