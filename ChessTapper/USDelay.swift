@@ -24,9 +24,6 @@ class USDelay: TimeControl {
     }
     
     func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {
-        // Keep adding the ongoing time, as long as it's less than the Bronstein delay.
-        // When the ongoing time gets larger than the Bronstein delay, the time will begin changing.
-//        return remainingTime - ongoing + min(ongoing, delay)
         return remainingTime - ongoing
     }
     
