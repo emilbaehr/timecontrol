@@ -10,10 +10,7 @@ import Foundation
 @objc class Timekeeper: NSObject, ObservableObject {
 
     private var timer: Timer?
-    
     private var start: Date?             // Start time of current timing.
-    private var paused: Date?             // Start time of current timing.
-    
     private var delay: TimeInterval?     // Time to delay. Could be observed by the UI to display the delay.
     
     @objc dynamic var whitePlayer: Player
@@ -84,7 +81,7 @@ import Foundation
             
         }
         
-        self.state = .running
+        state = .running
     }
     
     public func pause() {
@@ -95,8 +92,8 @@ import Foundation
         guard let start = self.start else { return }
         let interval = DateInterval(start: start, end: Date())
         
-        recordTime(for: player, duration: interval.duration, increment: 0)
-        
+        player.recordTime(timestamp: Date(), duration: interval.duration, increment: 0)
+
         // Just set the timer to nil.
         timer?.invalidate()
         timer = nil
@@ -113,8 +110,8 @@ import Foundation
         let interval = DateInterval(start: start, end: Date())
         
         let increment = player.timeControl.calculateIncrement(for: interval.duration)
-        recordTime(for: player, duration: interval.duration, increment: increment)
-        
+        player.record(timestamp: Date(), duration: interval.duration, increment: increment)
+
         // Stop everything. Can't be restarted.
         timer?.invalidate()
         timer = nil
@@ -132,7 +129,7 @@ import Foundation
         let interval = DateInterval(start: start, end: Date())
         
         let increment = previousPlayer.timeControl.calculateIncrement(for: interval.duration)
-        recordTime(for: previousPlayer, duration: interval.duration, increment: increment)
+        previousPlayer.record(timestamp: Date(), duration: interval.duration, increment: increment)
         
         // Only when switching turn.
         previousPlayer.remainingTime += increment
@@ -141,21 +138,10 @@ import Foundation
         // Re(set)
         delay = nextPlayer.timeControl.delay
                 
-        print("\(whitePlayer.name ?? "White") move: \(previousPlayer.moves), time: \(previousPlayer.remainingTime)")
-        print("\(blackPlayer.name ?? "Black") move: \(nextPlayer.moves), time: \(nextPlayer.remainingTime)")
+        print("\(whitePlayer.name ?? "WHITE")    move: \(previousPlayer.moves)    time: \(previousPlayer.remainingTime)")
+        print("\(blackPlayer.name ?? "BLACK")    move: \(nextPlayer.moves)    time: \(nextPlayer.remainingTime)")
         
         try self.start(nextPlayer)
-    }
-    
-}
-
-// MARK: - Helpers
-
-extension Timekeeper {
-    
-    func recordTime(for player: Player, duration: TimeInterval, increment: TimeInterval) {
-        let now = Date()
-        player.record(timestamp: now, duration: duration, increment: increment)
     }
     
 }
