@@ -92,7 +92,7 @@ import Foundation
         guard let start = self.start else { return }
         let interval = DateInterval(start: start, end: Date())
         
-        player.recordTime(timestamp: Date(), duration: interval.duration, increment: 0)
+        player.record(timestamp: Date(), duration: interval.duration, increment: 0)
 
         // Just set the timer to nil.
         timer?.invalidate()
