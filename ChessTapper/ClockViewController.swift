@@ -246,6 +246,10 @@ class ClockViewController: UIViewController, GameConfigurationDelegate {
                 
                 stopButton.isEnabled = true
                 pauseButton.isEnabled = false
+                whiteClockTap.isEnabled = false
+                blackClockTap.isEnabled = false
+
+                NSLayoutConstraint.activate(notStartedConstraints)
                 
             case .running:
 //                print("Running.")
@@ -329,7 +333,7 @@ class ClockViewController: UIViewController, GameConfigurationDelegate {
     
     @objc func stopButton(_ sender: UIButton) {
 
-        if timekeeper?.state == .paused || timekeeper?.state == .stopped {
+        if timekeeper?.state == .paused || timekeeper?.state == .stopped || timekeeper?.state == .timesUp {
             timekeeper?.stop()
 
             // Do some data clearing. Not sure if this should be build into the timekeeper, though.
