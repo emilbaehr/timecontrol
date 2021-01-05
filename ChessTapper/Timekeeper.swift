@@ -66,7 +66,7 @@ import Foundation
         // Used by timer loop to update remaining time.
         let remainingTime = nextPlayer.remainingTime
         
-        self.timer = Timer.init(fire: Date(), interval: 0.1, repeats: true) { timer in
+        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
 
             let now = Date()
             guard let start = self.start else { return }
@@ -85,10 +85,6 @@ import Foundation
                 self.state = .timesUp
             }
             
-        }
-        
-        if let timer = self.timer {
-            RunLoop.main.add(timer, forMode: .common)
         }
         
         self.state = .running
