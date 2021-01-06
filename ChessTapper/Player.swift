@@ -28,8 +28,8 @@ import Foundation
     
     init(timeControl: TimeControl, name: String? = nil) {
         self.name = name
-        self.remainingTime = timeControl.bookedTime
         self.timeControl = timeControl
+        self.remainingTime = timeControl.stages.first?.time ?? 0
         self.moves = 0
         self.records = []
     }

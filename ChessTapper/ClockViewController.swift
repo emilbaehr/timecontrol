@@ -46,7 +46,7 @@ class ClockViewController: UIViewController, GameConfigurationDelegate {
         let rootView = UIView()
         rootView.backgroundColor = .black
         
-        let timeControl = SuddenDeath(of: 300, delay: 0, increment: 0)
+        let timeControl = TimeControl(stages: [SuddenDeath(of: 300)])
         timekeeper = Timekeeper(whitePlayer: timeControl, blackPlayer: timeControl)
         
         whiteClock.backgroundColor = .white
@@ -337,7 +337,7 @@ class ClockViewController: UIViewController, GameConfigurationDelegate {
             timekeeper?.stop()
 
             // Do some data clearing. Not sure if this should be build into the timekeeper, though.
-            if let whiteBooked = timekeeper?.whitePlayer.timeControl.bookedTime, let blackBooked = timekeeper?.whitePlayer.timeControl.bookedTime {
+            if let whiteBooked = timekeeper?.whitePlayer.timeControl.stages.first?.time, let blackBooked = timekeeper?.whitePlayer.timeControl.stages.first?.time {
                 timekeeper?.whitePlayer.remainingTime = whiteBooked
                 timekeeper?.blackPlayer.remainingTime = blackBooked
             }

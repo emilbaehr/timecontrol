@@ -7,16 +7,18 @@
 
 import Foundation
 
-class Bronstein: TimeControl {
-
-    var bookedTime: TimeInterval
+class Bronstein: Stage {
+    
+    var moveCount: Int?
+    var time: TimeInterval
     var increment: TimeInterval
     var delay: TimeInterval
     
-    required init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval) {
-        self.bookedTime = seconds
+    required init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval, moveCount: Int? = nil) {
+        self.time = seconds
         self.increment = increment
         self.delay = delay
+        self.moveCount = moveCount
     }
     
     convenience init(of seconds: TimeInterval, increment: TimeInterval) {

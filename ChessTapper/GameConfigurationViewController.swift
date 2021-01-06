@@ -23,14 +23,14 @@ class GameConfigurationViewController: UIViewController, UITableViewDelegate, UI
     }
     
     let timeControls: [Int : TimeControlPresentation] = [
-        0 : TimeControlPresentation(name: "5 min", timeControl: SuddenDeath(of: 300)),
-        1 : TimeControlPresentation(name: "10 min", timeControl: SuddenDeath(of: 300)),
-        2 : TimeControlPresentation(name: "Fischer 5 | 5", timeControl: Fischer(of: 300, increment: 5)),
-        3 : TimeControlPresentation(name: "Fischer 10 | 3", timeControl: Fischer(of: 600, increment: 3)),
-        4 : TimeControlPresentation(name: "Bronstein 5 | 5", timeControl: Bronstein(of: 300, increment: 5)),
-        5 : TimeControlPresentation(name: "Bronstein 10 | 3", timeControl: Bronstein(of: 600, increment: 3)),
-        6 : TimeControlPresentation(name: "US Delay 5 | 5", timeControl: USDelay(of: 300, delay: 5)),
-        7 : TimeControlPresentation(name: "US Delay 10 | 3", timeControl: USDelay(of: 63, delay: 3))
+        0 : TimeControlPresentation(name: "5 min", timeControl: TimeControl(stages: [SuddenDeath(of: 300)])),
+        1 : TimeControlPresentation(name: "10 min", timeControl: TimeControl(stages: [SuddenDeath(of: 300)])),
+        2 : TimeControlPresentation(name: "Fischer 5 | 5", timeControl: TimeControl(stages: [Fischer(of: 300, increment: 5)])),
+        3 : TimeControlPresentation(name: "Fischer 10 | 3", timeControl: TimeControl(stages: [Fischer(of: 600, increment: 3)])),
+        4 : TimeControlPresentation(name: "Bronstein 5 | 5", timeControl: TimeControl(stages: [Bronstein(of: 300, increment: 5)])),
+        5 : TimeControlPresentation(name: "Bronstein 10 | 3", timeControl: TimeControl(stages: [Bronstein(of: 600, increment: 3)])),
+        6 : TimeControlPresentation(name: "US Delay 5 | 5", timeControl: TimeControl(stages: [USDelay(of: 300, delay: 5)])),
+        7 : TimeControlPresentation(name: "US Delay 10 | 3", timeControl: TimeControl(stages: [USDelay(of: 63, delay: 3)]))
     ]
     
     override func loadView() {

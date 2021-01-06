@@ -60,7 +60,7 @@ import Foundation
         
         // Set initial delay
         if state == .notStarted {
-            delay = nextPlayer.timeControl.delay
+            delay = nextPlayer.timeControl.stage?.delay
         }
         
         // Used by timer loop to update remaining time.
@@ -76,7 +76,7 @@ import Foundation
             
             if self.delay == 0 {
                 let interval = DateInterval(start: start, end: now)
-                nextPlayer.remainingTime = max(nextPlayer.timeControl.calculateRemainingTime(for: remainingTime, with: interval.duration - remainingDelay), 0)
+                nextPlayer.remainingTime = max(nextPlayer.timeControl.stage?.calculateRemainingTime(for: remainingTime, with: interval.duration - remainingDelay) ?? 0, 0)
             }
 
             // Notify when the time is up.
@@ -93,13 +93,6 @@ import Foundation
     
     public func pause() {
         guard state == .running else { return }
-        guard let player = playerInTurn else { return }
-        
-        // Get the ongoing time.
-        guard let start = self.start else { return }
-        let interval = DateInterval(start: start, end: Date())
-        
-        player.record(timestamp: Date(), duration: interval.duration, increment: 0)
 
         // Just set the timer to nil.
         timer?.invalidate()
@@ -116,14 +109,14 @@ import Foundation
         guard let start = self.start else { return }
         let interval = DateInterval(start: start, end: Date())
         
-        let increment = player.timeControl.calculateIncrement(for: interval.duration)
-        player.record(timestamp: Date(), duration: interval.duration, increment: increment)
+        let increment = player.timeControl.stage?.calculateIncrement(for: interval.duration)
+        player.record(timestamp: Date(), duration: interval.duration, increment: increment ?? 0)
 
         // Stop everything. Can't be restarted.
         timer?.invalidate()
         timer = nil
         playerInTurn = nil
-        
+
         state = .stopped
     }
     
@@ -135,15 +128,21 @@ import Foundation
         guard let start = self.start else { return }
         let interval = DateInterval(start: start, end: Date())
         
-        let increment = previousPlayer.timeControl.calculateIncrement(for: interval.duration)
-        previousPlayer.record(timestamp: Date(), duration: interval.duration, increment: increment)
+        let increment = previousPlayer.timeControl.stage?.calculateIncrement(for: interval.duration)
+        previousPlayer.record(timestamp: Date(), duration: interval.duration, increment: increment ?? 0)
         
         // Only when switching turn.
-        previousPlayer.remainingTime += increment
+        previousPlayer.remainingTime += increment ?? 0
         previousPlayer.moves += 1
         
+        // Check if the current stage has a moveCount attached.
+        // Check if the current stage is still valid and change accordingly.
+        if let moveCount = previousPlayer.timeControl.stage?.moveCount, moveCount > previousPlayer.moves {
+            
+        }
+        
         // Re(set)
-        delay = nextPlayer.timeControl.delay
+        delay = nextPlayer.timeControl.stage?.delay
                 
         print("\(whitePlayer.name ?? "WHITE")    move: \(previousPlayer.moves)    time: \(previousPlayer.remainingTime)")
         print("\(blackPlayer.name ?? "BLACK")    move: \(nextPlayer.moves)    time: \(nextPlayer.remainingTime)")
