@@ -10,8 +10,10 @@ import Foundation
 @objc class Timekeeper: NSObject, ObservableObject {
 
     private var timer: Timer?
-    private var start: Date?             // Start time of current timing.
-    private var delay: TimeInterval?     // Time to delay. Could be observed by the UI to display the delay.
+    
+    private var start: Date?            // Start time of current timing.
+    private var delay: TimeInterval?    // Time to delay. Could be observed by the UI to display the delay.
+                                        // But this is essentially what Bronstein delay does.
     
     @objc dynamic var whitePlayer: Player
     @objc dynamic var blackPlayer: Player
@@ -43,7 +45,6 @@ import Foundation
         // If Timekeeper was stopped, do not allow restart.
         guard state != .stopped || state != .timesUp else { throw Error.restartNotAllowed }
         
-
         // Clear timer, since it might be running on the previous player.
         self.timer?.invalidate()
         self.timer = nil
@@ -57,19 +58,25 @@ import Foundation
         // Start time for current move (or resumed move).
         start = Date()
         
+        // Set initial delay
+        if state == .notStarted {
+            delay = nextPlayer.timeControl.delay
+        }
+        
         // Used by timer loop to update remaining time.
         let remainingTime = nextPlayer.remainingTime
+        guard let remainingDelay = delay else { throw Error.noDelaySet }
         
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
 
             let now = Date()
             guard let start = self.start else { return }
             
-            self.delay = max(nextPlayer.timeControl.delay - DateInterval(start: start, end: now).duration, 0)
+            self.delay = max(remainingDelay - DateInterval(start: start, end: now).duration, 0)
             
             if self.delay == 0 {
                 let interval = DateInterval(start: start, end: now)
-                nextPlayer.remainingTime = max(nextPlayer.timeControl.calculateRemainingTime(for: remainingTime, with: interval.duration - nextPlayer.timeControl.delay), 0)
+                nextPlayer.remainingTime = max(nextPlayer.timeControl.calculateRemainingTime(for: remainingTime, with: interval.duration - remainingDelay), 0)
             }
 
             // Notify when the time is up.
@@ -154,6 +161,7 @@ extension Timekeeper {
         case unknownPlayer
         case restartNotAllowed
         case noStartTime
+        case noDelaySet
     }
 }
 

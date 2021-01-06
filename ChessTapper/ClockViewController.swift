@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  ClockViewController.swift
 //  ChessTapper
 //
 //  Created by Emil Malthe Bæhr Christensen on 27/08/2020.
