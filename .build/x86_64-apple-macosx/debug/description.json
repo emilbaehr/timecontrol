@@ -1,0 +1,14 @@
+{
+  "builtTestProducts" : [
+
+  ],
+  "copyCommands" : {
+
+  },
+  "swiftTargetMap" : {
+    "C.TimeControl-debug.module" : "TimeControl"
+  },
+  "testDiscoveryCommands" : {
+
+  }
+}

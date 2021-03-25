@@ -11,6 +11,6 @@ let package = Package(
         )
     ],
     targets: [
-        .target(name: "TimeControl", dependencies: [], path: "Sources")
+        .target(name: "TimeControl", dependencies: [], path: "Sources/TimeControl")
     ]
 )

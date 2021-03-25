@@ -1,0 +1,4 @@
+module TimeControl {
+    header "/Users/emil/Developer/ChessTapper/ChessTapper/TimeControl/.build/x86_64-apple-macosx/debug/TimeControl.build/TimeControl-Swift.h"
+    requires objc
+}
