@@ -7,6 +7,7 @@
 
 import Foundation
 
+@available(iOS 13.0, *)
 @objc class Timekeeper: NSObject, ObservableObject {
 
     private var timer: Timer?
@@ -153,6 +154,7 @@ import Foundation
 }
 
 // MARK: - Errors
+@available(iOS 13.0, *)
 extension Timekeeper {
     
     // Because we don't want to handle all the state and data clearing in conjunction with restarting a timekeeper from the beginning, we will throw an error. Just make a new Timekeeper.
