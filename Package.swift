@@ -4,6 +4,9 @@ import PackageDescription
 
 let package = Package(
     name: "TimeControl",
+    platforms: [
+        .iOS(.v13)
+    ],
     products: [
         .library(
             name: "TimeControl",
@@ -11,6 +14,6 @@ let package = Package(
         )
     ],
     targets: [
-        .target(name: "TimeControl", dependencies: [])
+        .target(name: "TimeControl", dependencies: [], path: "Sources")
     ]
 )
