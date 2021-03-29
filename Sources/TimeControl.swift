@@ -7,26 +7,26 @@
 
 import Foundation
 
-class TimeControl {
+public class TimeControl {
     
-    let stages: [Stage]
+    public let stages: [Stage]
     
     // Compute property for current stage?
-    public var stage: Stage?
+    public private(set) var stage: Stage?
     
-    init(stages: [Stage]) {
+    public init(stages: [Stage]) {
         self.stages = stages
         stage = stages.first
     }
     
     // A simples time control.
-    init(seconds: TimeInterval) {
+    public init(seconds: TimeInterval) {
         self.stages = [SuddenDeath(of: seconds)]
     }
     
 }
 
-protocol Stage {
+public protocol Stage {
     
     var moveCount: Int? { get }         // For how many moves the stage is valid.
     var time: TimeInterval { get }      // Main thinking time.

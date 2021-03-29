@@ -11,9 +11,9 @@ import Foundation
     
     var name: String?
     
-    @objc dynamic var remainingTime: TimeInterval
+    @objc dynamic public var remainingTime: TimeInterval
     
-    var timeControl: TimeControl
+    public var timeControl: TimeControl
     
     var moves: Int
     var records = [Record]()            // A time sheet.
@@ -26,7 +26,7 @@ import Foundation
         let increment: TimeInterval     // The increment added after the move.
     }
     
-    init(timeControl: TimeControl, name: String? = nil) {
+    public init(timeControl: TimeControl, name: String? = nil) {
         self.name = name
         self.timeControl = timeControl
         self.remainingTime = timeControl.stages.first?.time ?? 0
@@ -35,7 +35,7 @@ import Foundation
     }
     
     // +1 moves so no moves are called "Move 0".
-    func record(timestamp: Date, duration: TimeInterval, increment: TimeInterval) {
+    public func record(timestamp: Date, duration: TimeInterval, increment: TimeInterval) {
         let record = Record(move: moves + 1, timestamp: timestamp, duration: duration, increment: increment)
         records.append(record)
     }

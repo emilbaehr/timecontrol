@@ -7,8 +7,7 @@
 
 import Foundation
 
-@available(iOS 13.0, *)
-@objc class Timekeeper: NSObject, ObservableObject {
+@objc public class Timekeeper: NSObject, ObservableObject {
 
     private var timer: Timer?
     
@@ -16,8 +15,8 @@ import Foundation
     private var delay: TimeInterval?    // Time to delay. Could be observed by the UI to display the delay.
                                         // But this is essentially what Bronstein delay does.
     
-    @objc dynamic var whitePlayer: Player
-    @objc dynamic var blackPlayer: Player
+    @objc dynamic public var whitePlayer: Player
+    @objc dynamic public var blackPlayer: Player
     
     @objc dynamic public private(set) var playerInTurn: Player?
     public var playerOutOfTurn: Player? {
@@ -27,7 +26,7 @@ import Foundation
     
     @Published public private(set) var state: State
 
-    enum State: Equatable {
+    public enum State: Equatable {
         case notStarted
         case running
         case paused
@@ -35,7 +34,7 @@ import Foundation
         case timesUp
     }
     
-    init(whitePlayer: TimeControl, blackPlayer: TimeControl) {
+    public init(whitePlayer: TimeControl, blackPlayer: TimeControl) {
         self.whitePlayer = Player(timeControl: whitePlayer, name: "White")
         self.blackPlayer = Player(timeControl: blackPlayer, name: "Black")
         self.state = .notStarted
@@ -154,7 +153,6 @@ import Foundation
 }
 
 // MARK: - Errors
-@available(iOS 13.0, *)
 extension Timekeeper {
     
     // Because we don't want to handle all the state and data clearing in conjunction with restarting a timekeeper from the beginning, we will throw an error. Just make a new Timekeeper.
@@ -169,7 +167,7 @@ extension Timekeeper {
 // MARK: - Formatting
 extension TimeInterval {
 
-    func stringFromTimeInterval() -> String {
+    public func stringFromTimeInterval() -> String {
         
         // Use the custom TimeIntervalFormatter.
         let formatter = TimeIntervalFormatter()
