@@ -12,15 +12,16 @@ public class TimeControl {
     public let stages: [Stage]
     
     // Compute property for current stage?
-    public private(set) var stage: Stage?
+    public var stage: Stage? {
+        return stages.first
+    }
     
     public init(stages: [Stage]) {
         self.stages = stages
-        stage = stages.first
     }
     
     // A simples time control.
-    public init(seconds: TimeInterval) {
+    public init(of seconds: TimeInterval) {
         self.stages = [SuddenDeath(of: seconds)]
     }
     
