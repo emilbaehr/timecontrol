@@ -13,10 +13,9 @@ import Foundation
     
     @objc dynamic public var remainingTime: TimeInterval
     
-    public var timeControl: TimeControl
-    
-    var moves: Int
-    var records = [Record]()            // A time sheet.
+    internal(set) public var timeControl: TimeControl
+    internal(set) public var moves: Int
+    internal(set) public var records = [Record]()            // A time sheet.
     
     // A time sheet record for a move.
     public struct Record {
