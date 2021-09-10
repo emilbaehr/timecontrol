@@ -7,21 +7,21 @@
 
 import Foundation
 
-public class Bronstein: Stage {
+public struct Bronstein: Stage {
     
     public var moveCount: Int?
     public var time: TimeInterval
     public var increment: TimeInterval
     public var delay: TimeInterval
     
-    public required init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval, moveCount: Int? = nil) {
+    public init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval, moveCount: Int? = nil) {
         self.time = seconds
         self.increment = increment
         self.delay = delay
         self.moveCount = moveCount
     }
     
-    public convenience init(of seconds: TimeInterval, increment: TimeInterval) {
+    public init(of seconds: TimeInterval, increment: TimeInterval) {
         self.init(of: seconds, delay: .zero, increment: increment)
     }
     

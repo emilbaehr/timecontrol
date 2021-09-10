@@ -7,23 +7,22 @@
 
 import Foundation
 
-public class USDelay: Stage {
+public struct USDelay: Stage {
     
     public var moveCount: Int?
     
-
     public var time: TimeInterval
     public var increment: TimeInterval
     public var delay: TimeInterval
     
-    public required init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval, moveCount: Int? = nil) {
+    public init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval, moveCount: Int? = nil) {
         self.time = seconds
         self.increment = increment
         self.delay = delay
         self.moveCount = moveCount
     }
     
-    public convenience init(of seconds: TimeInterval, delay: TimeInterval) {
+    public init(of seconds: TimeInterval, delay: TimeInterval) {
         self.init(of: seconds, delay: delay, increment: .zero)
     }
     

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class TimeControl {
+public struct TimeControl {
     
     public let stages: [Stage]
     
