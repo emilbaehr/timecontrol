@@ -9,6 +9,8 @@ import Foundation
 
 public struct TimeControl {
     
+    public typealias Stage = TimeControlStage
+    
     public let stages: [Stage]
     
     // Compute property for current stage?
@@ -20,14 +22,14 @@ public struct TimeControl {
         self.stages = stages
     }
     
-    // A simples time control.
+    // A simple time control.
     public init(of seconds: TimeInterval) {
         self.stages = [SuddenDeath(of: seconds)]
     }
     
 }
 
-public protocol Stage {
+public protocol TimeControlStage {
     
     var moveCount: Int? { get }         // For how many moves the stage is valid.
     var time: TimeInterval { get }      // Main thinking time.
@@ -36,10 +38,16 @@ public protocol Stage {
                                         // For Bronstein, for example, the increment can never be more than the user spent on their move.
     var delay: TimeInterval { get }     // A delay period before the timer starts counting down. Used in US Delay.
     
-    init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval, moveCount: Int?)
-    
     func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval
     
     func calculateIncrement(for ongoing: TimeInterval) -> TimeInterval
+}
+
+// MARK: - Default Implementation
+extension TimeControl.Stage {
+    
+    public func calculateIncrement(for ongoing: TimeInterval) -> TimeInterval {
+        return 0
+    }
     
 }

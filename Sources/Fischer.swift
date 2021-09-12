@@ -7,22 +7,18 @@
 
 import Foundation
 
-public struct Fischer: Stage {
+public struct Fischer: TimeControl.Stage {
     
     public var moveCount: Int?
     public var time: TimeInterval
     public var increment: TimeInterval
     public var delay: TimeInterval
     
-    public init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval, moveCount: Int? = nil) {
+    public init(of seconds: TimeInterval, increment: TimeInterval, moveCount: Int? = nil) {
+        self.moveCount = moveCount
         self.time = seconds
         self.increment = increment
-        self.delay = delay
-        self.moveCount = moveCount
-    }
-    
-    public init(of seconds: TimeInterval, increment: TimeInterval) {
-        self.init(of: seconds, delay: .zero, increment: increment)
+        self.delay = 0
     }
     
     public func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {

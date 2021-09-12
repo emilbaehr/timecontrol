@@ -12,8 +12,8 @@ import Foundation
     private var timer: Timer?
     
     private var start: Date?            // Start time of current timing.
-    private var delay: TimeInterval?    // Time to delay. Could be observed by the UI to display the delay.
-                                        // But this is essentially what Bronstein delay does.
+    private var delay: TimeInterval?    // A TimeInterval that represents the ongoing delay.
+                                        // Could be observed by the UI to display the delay.
     
     @objc dynamic public var whitePlayer: Player
     @objc dynamic public var blackPlayer: Player
@@ -65,7 +65,7 @@ import Foundation
         
         // Used by timer loop to update remaining time.
         let remainingTime = nextPlayer.remainingTime
-        guard let remainingDelay = delay else { throw Error.noDelaySet }
+        let remainingDelay = delay ?? 0
         
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
 
@@ -103,14 +103,6 @@ import Foundation
     
     public func stop() {
         guard self.state != .stopped else { return }
-        guard let player = playerInTurn else { return }
-        
-        // Get the ongoing time.
-        guard let start = self.start else { return }
-        let interval = DateInterval(start: start, end: Date())
-        
-        let increment = player.timeControl.stage?.calculateIncrement(for: interval.duration)
-        player.record(timestamp: Date(), duration: interval.duration, increment: increment ?? 0)
 
         // Stop everything. Can't be restarted.
         timer?.invalidate()
@@ -126,30 +118,36 @@ import Foundation
         
         // Get the ongoing time.
         guard let start = self.start else { return }
-        let interval = DateInterval(start: start, end: Date())
+        let now = Date()
+        let interval = DateInterval(start: start, end: now)
         
         let increment = previousPlayer.timeControl.stage?.calculateIncrement(for: interval.duration)
-        previousPlayer.record(timestamp: Date(), duration: interval.duration, increment: increment ?? 0)
+        previousPlayer.record(timestamp: now, duration: interval.duration, increment: increment ?? 0)
         
-        // Only when switching turn.
+        // Only when switching turn, we increment time and move count. Not when pausing / resuming.
         previousPlayer.remainingTime += increment ?? 0
         previousPlayer.moves += 1
         
-        // Check if the current stage has a moveCount attached.
-        // Check if the current stage is still valid and change accordingly.
-        if let moveCount = previousPlayer.timeControl.stage?.moveCount, moveCount > previousPlayer.moves {
-            
-        }
+        // TODO: Check if the current stage has a moveCount attached. Check if the current stage is still valid and change accordingly.
         
         // Re(set)
         delay = nextPlayer.timeControl.stage?.delay
                 
-        print("\(whitePlayer.name ?? "WHITE")    move: \(previousPlayer.moves)    time: \(previousPlayer.remainingTime)")
-        print("\(blackPlayer.name ?? "BLACK")    move: \(nextPlayer.moves)    time: \(nextPlayer.remainingTime)")
+//        printGame()
         
         try self.start(nextPlayer)
     }
     
+}
+
+// MARK: - Debugging
+
+extension Timekeeper {
+    
+    func printGame() {
+        print("\(whitePlayer.name ?? "Player 1")    move: \(whitePlayer.moves)    time: \(whitePlayer.remainingTime)")
+        print("\(blackPlayer.name ?? "Player 2")    move: \(blackPlayer.moves)    time: \(blackPlayer.remainingTime)")
+    }
 }
 
 // MARK: - Errors
@@ -160,20 +158,5 @@ extension Timekeeper {
         case unknownPlayer
         case restartNotAllowed
         case noStartTime
-        case noDelaySet
     }
-}
-
-// MARK: - Formatting
-extension TimeInterval {
-
-    public func stringFromTimeInterval() -> String {
-        
-        // Use the custom TimeIntervalFormatter.
-        let formatter = TimeIntervalFormatter()
-        guard let string = formatter.string(from: self) else { return "String couldn't be formatted." }
-        
-        return string
-    }
-    
 }

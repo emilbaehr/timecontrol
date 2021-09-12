@@ -7,23 +7,18 @@
 
 import Foundation
 
-public struct USDelay: Stage {
-    
+public struct USDelay: TimeControl.Stage {
+
     public var moveCount: Int?
-    
     public var time: TimeInterval
     public var increment: TimeInterval
     public var delay: TimeInterval
     
-    public init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval, moveCount: Int? = nil) {
-        self.time = seconds
-        self.increment = increment
-        self.delay = delay
+    public init(of seconds: TimeInterval, delay: TimeInterval, moveCount: Int? = nil) {
         self.moveCount = moveCount
-    }
-    
-    public init(of seconds: TimeInterval, delay: TimeInterval) {
-        self.init(of: seconds, delay: delay, increment: .zero)
+        self.time = seconds
+        self.increment = 0
+        self.delay = delay
     }
     
     public func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {
@@ -31,7 +26,7 @@ public struct USDelay: Stage {
     }
     
     public func calculateIncrement(for ongoing: TimeInterval) -> TimeInterval {
-        return .zero
+        return 0
     }
     
 }

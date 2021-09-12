@@ -40,3 +40,17 @@ public class TimeIntervalFormatter: DateComponentsFormatter {
     }
     
 }
+
+// MARK: - Extension on TimeInterval
+extension TimeInterval {
+
+    public func stringFromTimeInterval() -> String {
+        
+        // Use the custom TimeIntervalFormatter.
+        let formatter = TimeIntervalFormatter()
+        guard let string = formatter.string(from: self) else { return "String couldn't be formatted." }
+        
+        return string
+    }
+    
+}

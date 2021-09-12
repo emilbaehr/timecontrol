@@ -11,6 +11,7 @@ import Foundation
     
     var name: String?
     
+    // TODO: Create a Combine Publisher instead.
     @objc dynamic public var remainingTime: TimeInterval
     
     internal(set) public var timeControl: TimeControl

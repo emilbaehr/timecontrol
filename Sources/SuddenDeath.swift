@@ -7,22 +7,18 @@
 
 import Foundation
 
-public struct SuddenDeath: Stage {
+public struct SuddenDeath: TimeControl.Stage {
     
     public var moveCount: Int?
     public var time: TimeInterval
     public var increment: TimeInterval
     public var delay: TimeInterval
     
-    public init(of seconds: TimeInterval, delay: TimeInterval, increment: TimeInterval, moveCount: Int? = nil) {
-        self.time = seconds
-        self.increment = increment
-        self.delay = delay
+    public init(of seconds: TimeInterval, moveCount: Int? = nil) {
         self.moveCount = moveCount
-    }
-    
-    public init(of seconds: TimeInterval) {
-        self.init(of: seconds, delay: .zero, increment: .zero)
+        self.time = seconds
+        self.increment = 0
+        self.delay = 0
     }
     
     public func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {
@@ -30,7 +26,7 @@ public struct SuddenDeath: Stage {
     }
     
     public func calculateIncrement(for ongoing: TimeInterval) -> TimeInterval {
-        return .zero
+        return 0
     }
     
 }
