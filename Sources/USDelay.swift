@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct USDelay: TimeControl.Stage {
+public struct USDelay: Stage {
 
     public var moveCount: Int?
     public var time: TimeInterval

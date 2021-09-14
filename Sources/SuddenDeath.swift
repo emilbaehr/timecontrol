@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct SuddenDeath: TimeControl.Stage {
+public struct SuddenDeath: Stage {
     
     public var moveCount: Int?
     public var time: TimeInterval

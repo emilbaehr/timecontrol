@@ -11,12 +11,12 @@ import Foundation
     
     var name: String?
     
-    // TODO: Create a Combine Publisher instead.
-    @objc dynamic public var remainingTime: TimeInterval
-    
     internal(set) public var timeControl: TimeControl
+    
+    // Timesheet
+    @Published internal(set) public var remainingTime: TimeInterval
     internal(set) public var moves: Int
-    internal(set) public var records = [Record]()            // A time sheet.
+    internal(set) public var records = [Record]()
     
     // A time sheet record for a move.
     public struct Record {

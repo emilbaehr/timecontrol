@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Fischer: TimeControl.Stage {
+public struct Fischer: Stage {
     
     public var moveCount: Int?
     public var time: TimeInterval

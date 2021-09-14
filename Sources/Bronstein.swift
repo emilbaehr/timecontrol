@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Bronstein: TimeControl.Stage {
+public struct Bronstein: Stage {
     
     public var moveCount: Int?
     public var time: TimeInterval
