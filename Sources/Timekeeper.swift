@@ -7,26 +7,28 @@
 
 import Foundation
 
-@objc public class Timekeeper: NSObject, ObservableObject {
+public class Timekeeper: NSObject, ObservableObject {
 
     private var timer: Timer?
     
-    private var start: Date?            // Start time of current timing.
-    private var delay: TimeInterval?    // A TimeInterval that represents the ongoing delay.
-                                        // Could be observed by the UI to display the delay.
+    // Start time of current timing.
+    private var start: Date?
     
-    @objc dynamic public var whitePlayer: Player
-    @objc dynamic public var blackPlayer: Player
+    // A TimeInterval that represents the ongoing delay.
+    // Could be observed by the UI to display the delay.
+    @Published public private(set) var delay: TimeInterval?
     
-    @objc dynamic public private(set) var playerInTurn: Player?
-    public var playerOutOfTurn: Player? {
-        guard let playerInTurn = self.playerInTurn else { return nil }
-        return playerInTurn == self.whitePlayer ? self.blackPlayer : self.whitePlayer
-    }
-    
+    @Published public private(set) var playerOne: Player
+    @Published public private(set) var playerTwo: Player
+    @Published public private(set) var playerInTurn: Player?
     @Published public private(set) var state: State
 
-    public enum State: Equatable {
+    public var playerOutOfTurn: Player? {
+        guard let playerInTurn = self.playerInTurn else { return nil }
+        return playerInTurn == self.playerOne ? self.playerTwo : self.playerOne
+    }
+    
+    public enum State {
         case notStarted
         case running
         case paused
@@ -34,9 +36,9 @@ import Foundation
         case timesUp
     }
     
-    public init(whitePlayer: TimeControl, blackPlayer: TimeControl) {
-        self.whitePlayer = Player(timeControl: whitePlayer, name: "White")
-        self.blackPlayer = Player(timeControl: blackPlayer, name: "Black")
+    public init(playerOne: TimeControl, playerTwo: TimeControl) {
+        self.playerOne = Player(timeControl: playerOne, name: "White")
+        self.playerTwo = Player(timeControl: playerTwo, name: "Black")
         self.state = .notStarted
     }
     
@@ -50,7 +52,7 @@ import Foundation
         self.timer = nil
         
         // Let the next player be the player specified in the call to start. Else, start the player in turn, or start white player.
-        let nextPlayer = player ?? playerInTurn ?? whitePlayer
+        let nextPlayer = player ?? playerInTurn ?? playerOne
         
         // The active player becomes the next player.
         playerInTurn = nextPlayer
@@ -145,8 +147,8 @@ import Foundation
 extension Timekeeper {
     
     func printGame() {
-        print("\(whitePlayer.name ?? "Player 1")    move: \(whitePlayer.moves)    time: \(whitePlayer.remainingTime)")
-        print("\(blackPlayer.name ?? "Player 2")    move: \(blackPlayer.moves)    time: \(blackPlayer.remainingTime)")
+        print("\(playerOne.name ?? "Player 1")    move: \(playerOne.moves)    time: \(playerOne.remainingTime)")
+        print("\(playerTwo.name ?? "Player 2")    move: \(playerTwo.moves)    time: \(playerTwo.remainingTime)")
     }
 }
 

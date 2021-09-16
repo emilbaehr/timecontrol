@@ -5,7 +5,8 @@ import PackageDescription
 let package = Package(
     name: "TimeControl",
     platforms: [
-        .iOS(.v13)
+        .iOS(.v13),
+        .macOS(.v10_15)
     ],
     products: [
         .library(
@@ -15,5 +16,6 @@ let package = Package(
     ],
     targets: [
         .target(name: "TimeControl", dependencies: [], path: "Sources"),
+        .testTarget(name: "TimeControlTests", dependencies: ["TimeControl"], path: "Tests")
     ]
 )

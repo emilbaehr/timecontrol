@@ -29,14 +29,17 @@ import Foundation
     public init(timeControl: TimeControl, name: String? = nil) {
         self.name = name
         self.timeControl = timeControl
-        self.remainingTime = timeControl.stages.first?.time ?? 0
+        self.remainingTime = timeControl.stage?.time ?? 0
         self.moves = 0
         self.records = []
     }
     
     // +1 moves so no moves are called "Move 0".
     public func record(timestamp: Date, duration: TimeInterval, increment: TimeInterval) {
-        let record = Record(move: moves + 1, timestamp: timestamp, duration: duration, increment: increment)
+        let record = Record(move: moves + 1,
+                            timestamp: timestamp,
+                            duration: duration,
+                            increment: increment)
         records.append(record)
     }
     
