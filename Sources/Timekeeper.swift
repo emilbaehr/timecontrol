@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class Timekeeper: NSObject, ObservableObject {
+public class Timekeeper: ObservableObject {
 
     private var timer: Timer?
     

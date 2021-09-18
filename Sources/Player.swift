@@ -7,7 +7,7 @@
 
 import Foundation
 
-@objc public class Player: NSObject {
+public class Player {
     
     var name: String?
     
