@@ -78,6 +78,10 @@ public class Timekeeper: ObservableObject {
             
             if self.delay == 0 {
                 let interval = DateInterval(start: start, end: now)
+                
+                let increment = nextPlayer.timeControl.stage?.calculateIncrement(for: interval.duration)
+                nextPlayer.remainingTime += increment ?? 0
+                
                 nextPlayer.remainingTime = max(nextPlayer.timeControl.stage?.calculateRemainingTime(for: remainingTime, with: interval.duration - remainingDelay) ?? 0, 0)
             }
 
