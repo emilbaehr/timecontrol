@@ -20,14 +20,50 @@ class TimeControlTests: XCTestCase {
         let remaining: TimeInterval
     }
     
+    fileprivate func makeMoves(_ moves: [TimeControlTests.Move], with timekeeper: Timekeeper) {
+        
+        // The total time of the game being played.
+        var totalTime: TimeInterval = 0
+        
+        for move in moves {
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + move.duration + totalTime) {
+                
+                XCTAssertEqual(move.player.remainingTime, move.remaining, accuracy: 0.1)
+                print("Remaining: \(move.player.remainingTime)")
+                print("Movecount: \(move.move)")
+                try? timekeeper.switchTurn()
+            }
+            
+            totalTime += move.duration
+        }
+    }
+    
+    fileprivate func start(_ timekeeper: Timekeeper) {
+        do {
+            try timekeeper.start()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    fileprivate func fulfill(_ expectation: XCTestExpectation, after expectedTimeout: TimeInterval) {
+        // Fulfilling the expectation here will mean that all moves were correctly timekept.
+        DispatchQueue.main.asyncAfter(deadline: .now() + expectedTimeout + 1) {
+            expectation.fulfill()
+        }
+    }
+    
     func testSuddenDeathTimekeeping() {
-        
-        let seconds = TimeInterval(60)
-        
-        let timeControl = TimeControl(of: seconds)
+
+        continueAfterFailure = false
+
+        let thinkingTime = TimeInterval(60)
+
+        let timeControl = TimeControl(of: thinkingTime)
         let timekeeper = Timekeeper(playerOne: timeControl, playerTwo: timeControl)
-        let expectation = XCTestExpectation(description: "Timekeeper stops when time is up for either player.")
-        
+        let expectation = XCTestExpectation(description: "Timekeeper correctly starts and keeps track of the time when players take turns.")
+
         let moves = [
             Move(player: timekeeper.playerOne, move: 1, duration: 2, remaining: 58),
             Move(player: timekeeper.playerTwo, move: 1, duration: 2, remaining: 58),
@@ -36,41 +72,24 @@ class TimeControlTests: XCTestCase {
             Move(player: timekeeper.playerOne, move: 3, duration: 0.5, remaining: 56.5),
             Move(player: timekeeper.playerTwo, move: 3, duration: 0.5, remaining: 56.5)
         ]
+
+        XCTAssertEqual(timekeeper.playerOne.remainingTime, thinkingTime)
+        XCTAssertEqual(timekeeper.playerTwo.remainingTime, thinkingTime)
         
-        XCTAssertEqual(timekeeper.playerOne.remainingTime, seconds)
-        XCTAssertEqual(timekeeper.playerTwo.remainingTime, seconds)
+        let expectedPlayTime: TimeInterval = moves.reduce(0) { $0 + $1.duration }
+
+        start(timekeeper)
+        print("The clock has been started.")
         
-        var totalTime: TimeInterval = 0
+        makeMoves(moves, with: timekeeper)
         
-        do {
-            
-            try timekeeper.start()
-            
-            for move in moves {
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + move.duration + totalTime) {
-                    
-                    XCTAssertEqual(move.player.remainingTime, move.remaining, accuracy: 0.1)
-                    print("Remaining: \(move.player.remainingTime)")
-                    print("Movecount: \(move.move)")
-                    try? timekeeper.switchTurn()
-                }
-                                
-                totalTime += move.duration
-            }
-            
-            print("All moves scheduled.")
-            
-            // If all moves were timekept correctly, fulfill the expectation.
-//            expectation.fulfill()
-            
-        } catch {
-            print("Error testing timekeeping.")
-        }
+        fulfill(expectation, after: expectedPlayTime)
         
-        wait(for: [expectation], timeout: seconds + 1)
+        // Another way to test could be to compute the values of the players timesheet.
+
+        // Wait for the expectation to fulfill.
+        wait(for: [expectation], timeout: expectedPlayTime + 1)
     }
-    
     
     func testFischerTimekeeping() {
         
