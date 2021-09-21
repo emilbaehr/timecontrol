@@ -15,7 +15,7 @@ public class Player {
     
     // Timesheet
     @Published internal(set) public var remainingTime: TimeInterval
-    internal(set) public var moves: Int
+    @Published internal(set) public var moves: Int
     internal(set) public var records = [Record]()
     
     // A time sheet record for a move.
