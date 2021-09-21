@@ -69,7 +69,7 @@ public class Timekeeper: ObservableObject {
         let remainingTime = nextPlayer.remainingTime
         let remainingDelay = delay ?? 0
         
-        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
+        timer = Timer.scheduledTimer(withTimeInterval: 0.02, repeats: true) { timer in
 
             let now = Date()
             guard let start = self.start else { return }
@@ -77,10 +77,9 @@ public class Timekeeper: ObservableObject {
             self.delay = max(remainingDelay - DateInterval(start: start, end: now).duration, 0)
             
             if self.delay == 0 {
-                let interval = DateInterval(start: start, end: now)
                 
-                let increment = nextPlayer.timeControl.stage?.calculateIncrement(for: interval.duration)
-                nextPlayer.remainingTime += increment ?? 0
+                // Only start computing the ongoing interval when the delay has run out.
+                let interval = DateInterval(start: start, end: now)
                 
                 nextPlayer.remainingTime = max(nextPlayer.timeControl.stage?.calculateRemainingTime(for: remainingTime, with: interval.duration - remainingDelay) ?? 0, 0)
             }

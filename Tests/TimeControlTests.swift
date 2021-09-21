@@ -9,15 +9,27 @@
 import Foundation
 import XCTest
 
+protocol Move {
+    var movecount: Int { get }
+    var player: Player { get }
+    var duration: TimeInterval { get }
+    var remaining: TimeInterval { get }
+}
+
 class TimeControlTests: XCTestCase {
     
-    struct Move {
-        let player: Player
-        let move: Int
-        let duration: TimeInterval
-        var increment: TimeInterval? = nil
-        var delay: TimeInterval? = nil
-        let remaining: TimeInterval
+    struct Pause: Move {
+        var movecount: Int
+        var player: Player
+        var duration: TimeInterval
+        var remaining: TimeInterval
+    }
+    
+    struct Turn: Move {
+        var movecount: Int
+        var player: Player
+        var duration: TimeInterval
+        var remaining: TimeInterval
     }
     
     func testTimeControlInitialisation() {
@@ -40,13 +52,13 @@ class TimeControlTests: XCTestCase {
         let timekeeper = Timekeeper(playerOne: timeControl, playerTwo: timeControl)
         let expectation = XCTestExpectation(description: "Timekeeper correctly starts and keeps track of the time when players take turns.")
 
-        let moves = [
-            Move(player: timekeeper.playerOne, move: 1, duration: 2, remaining: 58),
-            Move(player: timekeeper.playerTwo, move: 1, duration: 2, remaining: 58),
-            Move(player: timekeeper.playerOne, move: 2, duration: 1, remaining: 57),
-            Move(player: timekeeper.playerTwo, move: 2, duration: 1, remaining: 57),
-            Move(player: timekeeper.playerOne, move: 3, duration: 0.5, remaining: 56.5),
-            Move(player: timekeeper.playerTwo, move: 3, duration: 0.5, remaining: 56.5)
+        let moves: [Move] = [
+            Turn(movecount: 1, player: timekeeper.playerOne, duration: 2, remaining: 58),
+            Turn(movecount: 1, player: timekeeper.playerTwo, duration: 2, remaining: 58),
+            Turn(movecount: 2, player: timekeeper.playerOne, duration: 1, remaining: 57),
+            Turn(movecount: 2, player: timekeeper.playerTwo, duration: 1, remaining: 57),
+            Turn(movecount: 3, player: timekeeper.playerOne, duration: 0.5, remaining: 56.5),
+            Turn(movecount: 3, player: timekeeper.playerTwo, duration: 0.5, remaining: 56.5)
         ]
         
         let expectedPlayTime: TimeInterval = moves.reduce(0) { $0 + $1.duration }
@@ -73,12 +85,12 @@ class TimeControlTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Timekeeper correctly starts and keeps track of the time when players take turns.")
 
         let moves = [
-            Move(player: timekeeper.playerOne, move: 1, duration: 2, remaining: 63),
-            Move(player: timekeeper.playerTwo, move: 1, duration: 2, remaining: 63),
-            Move(player: timekeeper.playerOne, move: 2, duration: 1, remaining: 67),
-            Move(player: timekeeper.playerTwo, move: 2, duration: 1, remaining: 67),
-            Move(player: timekeeper.playerOne, move: 3, duration: 0.5, remaining: 71.5),
-            Move(player: timekeeper.playerTwo, move: 3, duration: 0.5, remaining: 71.5)
+            Turn(movecount: 1, player: timekeeper.playerOne, duration: 2, remaining: 63),
+            Turn(movecount: 1, player: timekeeper.playerTwo, duration: 2, remaining: 63),
+            Turn(movecount: 2, player: timekeeper.playerOne, duration: 1, remaining: 67),
+            Turn(movecount: 2, player: timekeeper.playerTwo, duration: 1, remaining: 67),
+            Turn(movecount: 3, player: timekeeper.playerOne, duration: 0.5, remaining: 71.5),
+            Turn(movecount: 3, player: timekeeper.playerTwo, duration: 0.5, remaining: 71.5)
         ]
         
         let expectedPlayTime: TimeInterval = moves.reduce(0) { $0 + $1.duration }
@@ -94,16 +106,70 @@ class TimeControlTests: XCTestCase {
     
     func testBronsteinTimekeeping() {
         
+        continueAfterFailure = false
+
+        // Given:
+        let thinkingTime = TimeInterval(60)
+
+        let timeControl = TimeControl(stages: [Bronstein(of: thinkingTime, increment: 2)])
+        let timekeeper = Timekeeper(playerOne: timeControl, playerTwo: timeControl)
+        let expectation = XCTestExpectation(description: "Timekeeper correctly starts and keeps track of the time when players take turns.")
+
+        let moves = [
+            Turn(movecount: 1, player: timekeeper.playerOne, duration: 2, remaining: 60),
+            Turn(movecount: 1, player: timekeeper.playerTwo, duration: 2, remaining: 60),
+            Turn(movecount: 2, player: timekeeper.playerOne, duration: 1, remaining: 60),
+            Turn(movecount: 2, player: timekeeper.playerTwo, duration: 1, remaining: 60),
+            Turn(movecount: 3, player: timekeeper.playerOne, duration: 3, remaining: 59),
+            Turn(movecount: 3, player: timekeeper.playerTwo, duration: 3, remaining: 59)
+        ]
+        
+        let expectedPlayTime: TimeInterval = moves.reduce(0) { $0 + $1.duration }
+
+        // When:
+        start(timekeeper)
+        makeMoves(moves, with: timekeeper)
+        fulfill(expectation, after: expectedPlayTime)
+
+        // Wait for the expectation to fulfill.
+        wait(for: [expectation], timeout: expectedPlayTime + 1)
     }
     
     func testUSDelayTimekeeping() {
         
+        continueAfterFailure = false
+
+        // Given:
+        let thinkingTime = TimeInterval(60)
+
+        let timeControl = TimeControl(stages: [USDelay(of: thinkingTime, delay: 2)])
+        let timekeeper = Timekeeper(playerOne: timeControl, playerTwo: timeControl)
+        let expectation = XCTestExpectation(description: "Timekeeper correctly starts and keeps track of the time when players take turns.")
+
+        let moves = [
+            Turn(movecount: 1, player: timekeeper.playerOne, duration: 2, remaining: 60),
+            Turn(movecount: 1, player: timekeeper.playerTwo, duration: 2, remaining: 60),
+            Turn(movecount: 2, player: timekeeper.playerOne, duration: 1, remaining: 60),
+            Turn(movecount: 2, player: timekeeper.playerTwo, duration: 1, remaining: 60),
+            Turn(movecount: 3, player: timekeeper.playerOne, duration: 3, remaining: 59),
+            Turn(movecount: 3, player: timekeeper.playerTwo, duration: 3, remaining: 59)
+        ]
+        
+        let expectedPlayTime: TimeInterval = moves.reduce(0) { $0 + $1.duration }
+
+        // When:
+        start(timekeeper)
+        makeMoves(moves, with: timekeeper)
+        fulfill(expectation, after: expectedPlayTime)
+
+        // Wait for the expectation to fulfill.
+        wait(for: [expectation], timeout: expectedPlayTime + 1)
     }
 }
 
 // MARK: - Private
 extension TimeControlTests {
-    fileprivate func makeMoves(_ moves: [TimeControlTests.Move], with timekeeper: Timekeeper) {
+    fileprivate func makeMoves(_ moves: [Move], with timekeeper: Timekeeper) {
         
         var totalTime: TimeInterval = 0
         
@@ -113,7 +179,7 @@ extension TimeControlTests {
                 try? timekeeper.switchTurn()
                 XCTAssertEqual(move.player.remainingTime, move.remaining, accuracy: 0.1)
                 print("Remaining: \(move.player.remainingTime)")
-                print("Movecount: \(move.move)")
+                print("Movecount: \(move.movecount)")
             }
             
             totalTime += move.duration
@@ -130,7 +196,7 @@ extension TimeControlTests {
     
     fileprivate func fulfill(_ expectation: XCTestExpectation, after expectedTimeout: TimeInterval) {
         // Fulfilling the expectation here will mean that all moves were correctly timekept.
-        DispatchQueue.main.asyncAfter(deadline: .now() + expectedTimeout + 1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + expectedTimeout) {
             expectation.fulfill()
         }
     }
