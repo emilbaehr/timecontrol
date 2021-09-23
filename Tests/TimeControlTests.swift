@@ -169,7 +169,7 @@ class TimeControlTests: XCTestCase {
 
 // MARK: - Private
 extension TimeControlTests {
-    fileprivate func makeMoves(_ moves: [Move], with timekeeper: Timekeeper) {
+    private func makeMoves(_ moves: [Move], with timekeeper: Timekeeper) {
         
         var totalTime: TimeInterval = 0
         
@@ -186,7 +186,7 @@ extension TimeControlTests {
         }
     }
     
-    fileprivate func start(_ timekeeper: Timekeeper) {
+    private func start(_ timekeeper: Timekeeper) {
         do {
             try timekeeper.start()
         } catch {
@@ -194,7 +194,7 @@ extension TimeControlTests {
         }
     }
     
-    fileprivate func fulfill(_ expectation: XCTestExpectation, after expectedTimeout: TimeInterval) {
+    private func fulfill(_ expectation: XCTestExpectation, after expectedTimeout: TimeInterval) {
         // Fulfilling the expectation here will mean that all moves were correctly timekept.
         DispatchQueue.main.asyncAfter(deadline: .now() + expectedTimeout) {
             expectation.fulfill()
