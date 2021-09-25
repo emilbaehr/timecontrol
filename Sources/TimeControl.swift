@@ -12,8 +12,8 @@ public struct TimeControl {
     public let stages: [Stage]
     
     // Compute property for current stage?
-    public var stage: Stage? {
-        return stages.first
+    public var stage: Stage {
+        return stages.first!
     }
     
     public init(stages: [Stage]) {

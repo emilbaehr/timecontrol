@@ -29,7 +29,7 @@ public class Player {
     public init(timeControl: TimeControl, name: String? = nil) {
         self.name = name
         self.timeControl = timeControl
-        self.remainingTime = timeControl.stage?.time ?? 0
+        self.remainingTime = timeControl.stage.time
         self.moves = 0
         self.records = []
     }

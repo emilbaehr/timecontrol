@@ -62,7 +62,7 @@ public class Timekeeper: ObservableObject {
         
         // Set initial delay
         if state == .notStarted {
-            delay = nextPlayer.timeControl.stage?.delay
+            delay = nextPlayer.timeControl.stage.delay
         }
         
         // Used by timer loop to update remaining time.
@@ -81,7 +81,8 @@ public class Timekeeper: ObservableObject {
                 // Only start computing the ongoing interval when the delay has run out.
                 let interval = DateInterval(start: start, end: now)
                 
-                nextPlayer.remainingTime = max(nextPlayer.timeControl.stage?.calculateRemainingTime(for: remainingTime, with: interval.duration - remainingDelay) ?? 0, 0)
+                nextPlayer.remainingTime = max(nextPlayer.timeControl.stage.calculateRemainingTime(for: remainingTime,
+                                                                                                   with: interval.duration - remainingDelay), 0)
             }
 
             // Notify when the time is up.
@@ -126,17 +127,17 @@ public class Timekeeper: ObservableObject {
         let now = Date()
         let interval = DateInterval(start: start, end: now)
         
-        let increment = previousPlayer.timeControl.stage?.calculateIncrement(for: interval.duration)
-        previousPlayer.record(timestamp: now, duration: interval.duration, increment: increment ?? 0)
+        let increment = previousPlayer.timeControl.stage.calculateIncrement(for: interval.duration)
+        previousPlayer.record(timestamp: now, duration: interval.duration, increment: increment )
         
         // Only when switching turn, we increment time and move count. Not when pausing / resuming.
-        previousPlayer.remainingTime += increment ?? 0
+        previousPlayer.remainingTime += increment
         previousPlayer.moves += 1
         
         // TODO: Check if the current stage has a moveCount attached. Check if the current stage is still valid and change accordingly.
         
         // Re(set)
-        delay = nextPlayer.timeControl.stage?.delay
+        delay = nextPlayer.timeControl.stage.delay
                 
 //        printGame()
         
