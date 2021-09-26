@@ -177,7 +177,7 @@ extension TimeControlTests {
             
             DispatchQueue.main.asyncAfter(deadline: .now() + move.duration + totalTime) {
                 try? timekeeper.switchTurn()
-                XCTAssertEqual(move.player.remainingTime, move.remaining, accuracy: 0.1)
+                XCTAssertEqual(move.player.remainingTime, move.remaining, accuracy: 0.1 * Double(move.movecount))
                 print("Remaining: \(move.player.remainingTime)")
                 print("Movecount: \(move.movecount)")
             }
