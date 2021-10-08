@@ -7,8 +7,8 @@
 
 import Foundation
 
-public struct USDelay: Stage {
-
+public class USDelay: Stage {
+    
     public var moveCount: Int?
     public var time: TimeInterval
     public var increment: TimeInterval

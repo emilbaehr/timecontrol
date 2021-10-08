@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct TimeControl: Codable {
+public struct TimeControl {
     
     public var stages: [Stage]
     public var stage: Stage
@@ -25,38 +25,30 @@ public struct TimeControl: Codable {
     
 }
 
-protocol HasIncrement {
+public protocol HasIncrement {
     var increment: TimeInterval { get }
 }
 
-protocol HasDelay {
+public protocol HasDelay {
     var delay: TimeInterval { get }
 }
 
-public protocol StageBehaviour {
+public protocol Stage: HasIncrement, HasDelay, Codable {
+    
+    var moveCount: Int? { get }
+    var time: TimeInterval { get }
+    var increment: TimeInterval { get }
+    var delay: TimeInterval { get }
+    
     func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval
+    
     func calculateIncrement(for ongoing: TimeInterval) -> TimeInterval
 }
 
-public class Stage: HasIncrement, HasDelay, Codable {
+extension Stage {
     
-    public private(set) var moveCount: Int?
-    public private(set) var time: TimeInterval
-    public private(set) var increment: TimeInterval
-    public private(set) var delay: TimeInterval
-    
-    public init(seconds: TimeInterval, moveCount: Int? = nil, increment: TimeInterval, delay: TimeInterval) {
-        self.moveCount = moveCount
-        self.time = seconds
-        self.increment = increment
-        self.delay = delay
+    public func encode(to encoder: Encoder) throws {
+        
     }
     
-    func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {
-        return remainingTime - ongoing
-    }
-    
-    func calculateIncrement(for ongoing: TimeInterval) -> TimeInterval {
-        return 0
-    }
 }
