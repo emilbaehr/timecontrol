@@ -7,36 +7,56 @@
 
 import Foundation
 
-public struct TimeControl {
+public struct TimeControl: Codable {
     
-    public let stages: [Stage]
-    
-    // Compute property for current stage?
-    public var stage: Stage {
-        return stages.first!
-    }
+    public var stages: [Stage]
+    public var stage: Stage
     
     public init(stages: [Stage]) {
         self.stages = stages
+        self.stage = stages.first!
     }
     
     // A simple time control.
     public init(of seconds: TimeInterval) {
         self.stages = [SuddenDeath(of: seconds)]
+        self.stage = stages.first!
     }
     
 }
 
-public protocol Stage {
-    
-    var moveCount: Int? { get }         // For how many moves the stage is valid.
-    var time: TimeInterval { get }      // Main thinking time.
-    var increment: TimeInterval { get } // An increment that is added after the players turn.
-                                        // Can be manipulated depending on the time control.
-                                        // For Bronstein, for example, the increment can never be more than the user spent on their move.
-    var delay: TimeInterval { get }     // A delay period before the timer starts counting down. Used in US Delay.
-    
+protocol HasIncrement {
+    var increment: TimeInterval { get }
+}
+
+protocol HasDelay {
+    var delay: TimeInterval { get }
+}
+
+public protocol StageBehaviour {
     func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval
-    
     func calculateIncrement(for ongoing: TimeInterval) -> TimeInterval
+}
+
+public class Stage: HasIncrement, HasDelay, Codable {
+    
+    public private(set) var moveCount: Int?
+    public private(set) var time: TimeInterval
+    public private(set) var increment: TimeInterval
+    public private(set) var delay: TimeInterval
+    
+    public init(seconds: TimeInterval, moveCount: Int? = nil, increment: TimeInterval, delay: TimeInterval) {
+        self.moveCount = moveCount
+        self.time = seconds
+        self.increment = increment
+        self.delay = delay
+    }
+    
+    func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {
+        return remainingTime - ongoing
+    }
+    
+    func calculateIncrement(for ongoing: TimeInterval) -> TimeInterval {
+        return 0
+    }
 }
