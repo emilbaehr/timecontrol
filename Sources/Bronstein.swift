@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class Bronstein: Stage {
+public struct Bronstein: Stage {
     
     public var moveCount: Int?
     public var time: TimeInterval

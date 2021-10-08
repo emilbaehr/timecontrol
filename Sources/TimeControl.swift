@@ -9,31 +9,39 @@ import Foundation
 
 public struct TimeControl {
     
-    public var stages: [Stage]
-    public var stage: Stage
+    public var stages: [AnyStage]
+    public var stage: AnyStage
     
-    public init(stages: [Stage]) {
+    public init(stages: [AnyStage]) {
         self.stages = stages
         self.stage = stages.first!
     }
     
     // A simple time control.
     public init(of seconds: TimeInterval) {
-        self.stages = [SuddenDeath(of: seconds)]
+        self.stages = [AnyStage(SuddenDeath(of: seconds))]
         self.stage = stages.first!
     }
     
 }
 
-public protocol HasIncrement {
-    var increment: TimeInterval { get }
+// MARK: - Stage
+public struct AnyStage: Stage, Codable {
+
+    public var moveCount: Int?
+    public var time: TimeInterval
+    public var increment: TimeInterval
+    public var delay: TimeInterval
+
+    init(_ base: Stage) {
+        self.moveCount = base.moveCount
+        self.time = base.time
+        self.increment = base.increment
+        self.delay = base.delay
+    }
 }
 
-public protocol HasDelay {
-    var delay: TimeInterval { get }
-}
-
-public protocol Stage: HasIncrement, HasDelay, Codable {
+public protocol Stage: Codable {
     
     var moveCount: Int? { get }
     var time: TimeInterval { get }
@@ -47,8 +55,12 @@ public protocol Stage: HasIncrement, HasDelay, Codable {
 
 extension Stage {
     
-    public func encode(to encoder: Encoder) throws {
-        
+    public func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {
+        ongoing - remainingTime
+    }
+    
+    public func calculateIncrement(for ongoing: TimeInterval) -> TimeInterval {
+        0
     }
     
 }
