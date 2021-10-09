@@ -21,12 +21,4 @@ public struct SuddenDeath: Stage {
         self.delay = 0
     }
     
-    public func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {
-        return remainingTime - ongoing
-    }
-    
-    public func calculateIncrement(for ongoing: TimeInterval) -> TimeInterval {
-        return 0
-    }
-    
 }

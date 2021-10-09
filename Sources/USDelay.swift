@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class USDelay: Stage {
+public struct USDelay: Stage {
     
     public var moveCount: Int?
     public var time: TimeInterval
@@ -19,14 +19,6 @@ public class USDelay: Stage {
         self.time = seconds
         self.increment = 0
         self.delay = delay
-    }
-    
-    public func calculateRemainingTime(for remainingTime: TimeInterval, with ongoing: TimeInterval) -> TimeInterval {
-        return remainingTime - ongoing
-    }
-    
-    public func calculateIncrement(for ongoing: TimeInterval) -> TimeInterval {
-        return 0
     }
     
 }
