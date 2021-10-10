@@ -26,7 +26,7 @@ public struct TimeControl: Codable {
 }
 
 // MARK: - Stage
-public enum StageType: String, Codable {
+public enum StageType: String, Codable, CaseIterable {
     case noIncrement
     case bronstein
     case fischer
@@ -47,8 +47,9 @@ public enum StageType: String, Codable {
 }
 
 public struct AnyStage: Codable {
-    private var stage: Stage
+    private let stage: Stage
     
+    public var type: StageType { stage.type }
     public var moveCount: Int? { stage.moveCount }
     public var time: TimeInterval { stage.time }
     public var increment: TimeInterval { stage.increment }
