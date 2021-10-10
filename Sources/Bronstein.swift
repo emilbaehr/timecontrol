@@ -9,6 +9,8 @@ import Foundation
 
 public struct Bronstein: Stage {
     
+    public var type = StageType.bronstein
+    
     public var moveCount: Int?
     public var time: TimeInterval
     public var increment: TimeInterval

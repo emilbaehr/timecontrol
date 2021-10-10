@@ -9,6 +9,8 @@ import Foundation
 
 public struct Fischer: Stage {
     
+    public var type = StageType.fischer
+    
     public var moveCount: Int?
     public var time: TimeInterval
     public var increment: TimeInterval

@@ -9,6 +9,8 @@ import Foundation
 
 public struct SuddenDeath: Stage {
     
+    public var type = StageType.noIncrement
+    
     public var moveCount: Int?
     public var time: TimeInterval
     public var increment: TimeInterval

@@ -9,6 +9,8 @@ import Foundation
 
 public struct USDelay: Stage {
     
+    public var type = StageType.usDelay
+    
     public var moveCount: Int?
     public var time: TimeInterval
     public var increment: TimeInterval
