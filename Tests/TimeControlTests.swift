@@ -80,7 +80,7 @@ class TimeControlTests: XCTestCase {
         // Given:
         let thinkingTime = TimeInterval(60)
 
-        let timeControl = TimeControl(stages: [Fischer(of: thinkingTime, increment: 5)])
+        let timeControl = TimeControl(stages: [AnyStage(stage: Fischer(of: thinkingTime, increment: 5))])
         let timekeeper = Timekeeper(playerOne: timeControl, playerTwo: timeControl)
         let expectation = XCTestExpectation(description: "Timekeeper correctly starts and keeps track of the time when players take turns.")
 
@@ -111,7 +111,7 @@ class TimeControlTests: XCTestCase {
         // Given:
         let thinkingTime = TimeInterval(60)
 
-        let timeControl = TimeControl(stages: [Bronstein(of: thinkingTime, increment: 2)])
+        let timeControl = TimeControl(stages: [AnyStage(stage: Bronstein(of: thinkingTime, increment: 2))])
         let timekeeper = Timekeeper(playerOne: timeControl, playerTwo: timeControl)
         let expectation = XCTestExpectation(description: "Timekeeper correctly starts and keeps track of the time when players take turns.")
 
@@ -142,7 +142,7 @@ class TimeControlTests: XCTestCase {
         // Given:
         let thinkingTime = TimeInterval(60)
 
-        let timeControl = TimeControl(stages: [USDelay(of: thinkingTime, delay: 2)])
+        let timeControl = TimeControl(stages: [AnyStage(stage: USDelay(of: thinkingTime, delay: 2))])
         let timekeeper = Timekeeper(playerOne: timeControl, playerTwo: timeControl)
         let expectation = XCTestExpectation(description: "Timekeeper correctly starts and keeps track of the time when players take turns.")
 
